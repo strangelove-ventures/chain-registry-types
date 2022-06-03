@@ -13,7 +13,13 @@ make build  # generate types artifacts to dist/
 
 ## Workflow
 
-Build process workflow can be seen in this project's [Makefile](./Makefile).
+**Build process**
+
+Refer to project [Makefile](./Makefile).
+
+**Scheduled GitHub workflow**
+
+Generated types will be rebuilt every 12 hours [(view workflow)](./.github/workflows/schedule.yml).
 
 ## License
 
