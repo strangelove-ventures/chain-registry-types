@@ -1,0 +1,22 @@
+{
+  "name": "chain-registry-types",
+  "version": "0.0.0",
+  "workspaces": [
+    "dist/*"
+  ],
+  "dependencies": {
+    "quicktype": "latest"
+  },
+  "resolutions": {
+    "node-fetch": "npm:node-fetch-native@latest"
+  },
+  "prettier": {
+    "endOfLine": "auto",
+    "printWidth": 120,
+    "semi": true,
+    "singleQuote": false,
+    "trailingComma": "all"
+  },
+  "type": "module",
+  "private": true
+}
