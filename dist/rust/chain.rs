@@ -15,36 +15,33 @@ extern crate serde_derive;
 
 #[derive(Serialize, Deserialize)]
 pub struct Chain {
+    #[serde(rename = "type")]
+    chain_type: String,
+
+    #[serde(rename = "$defs")]
+    defs: Defs,
+
+    #[serde(rename = "description")]
+    description: String,
+
     #[serde(rename = "$id")]
     id: String,
+
+    #[serde(rename = "properties")]
+    properties: ChainProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 
     #[serde(rename = "$schema")]
     schema: String,
 
     #[serde(rename = "title")]
     title: String,
-
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "type")]
-    chain_type: String,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
-    #[serde(rename = "properties")]
-    properties: ChainProperties,
-
-    #[serde(rename = "$defs")]
-    defs: Defs,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Defs {
-    #[serde(rename = "peer")]
-    peer: Peer,
-
     #[serde(rename = "endpoint")]
     endpoint: Endpoint,
 
@@ -56,6 +53,9 @@ pub struct Defs {
 
     #[serde(rename = "logo_URIs")]
     logo_ur_is: LogoUrIs,
+
+    #[serde(rename = "peer")]
+    peer: Peer,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -63,11 +63,11 @@ pub struct Endpoint {
     #[serde(rename = "type")]
     endpoint_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: EndpointProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -96,17 +96,17 @@ pub struct Explorer {
 
 #[derive(Serialize, Deserialize)]
 pub struct ExplorerProperties {
+    #[serde(rename = "account_page")]
+    account_page: Bech32Prefix,
+
     #[serde(rename = "kind")]
     kind: Bech32Prefix,
-
-    #[serde(rename = "url")]
-    url: Bech32Prefix,
 
     #[serde(rename = "tx_page")]
     tx_page: Bech32Prefix,
 
-    #[serde(rename = "account_page")]
-    account_page: Bech32Prefix,
+    #[serde(rename = "url")]
+    url: Bech32Prefix,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -114,11 +114,11 @@ pub struct FeeToken {
     #[serde(rename = "type")]
     fee_token_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: FeeTokenProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -150,11 +150,11 @@ pub struct LogoUrIsProperties {
 
 #[derive(Serialize, Deserialize)]
 pub struct Png {
-    #[serde(rename = "type")]
-    png_type: Type,
-
     #[serde(rename = "format")]
     format: String,
+
+    #[serde(rename = "type")]
+    png_type: Type,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -162,20 +162,20 @@ pub struct Peer {
     #[serde(rename = "type")]
     peer_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: PeerProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct PeerProperties {
-    #[serde(rename = "id")]
-    id: Bech32Prefix,
-
     #[serde(rename = "address")]
     address: Bech32Prefix,
+
+    #[serde(rename = "id")]
+    id: Bech32Prefix,
 
     #[serde(rename = "provider")]
     provider: Bech32Prefix,
@@ -183,53 +183,53 @@ pub struct PeerProperties {
 
 #[derive(Serialize, Deserialize)]
 pub struct ChainProperties {
-    #[serde(rename = "chain_name")]
-    chain_name: Bech32Prefix,
-
-    #[serde(rename = "chain_id")]
-    chain_id: Bech32Prefix,
-
-    #[serde(rename = "pretty_name")]
-    pretty_name: Bech32Prefix,
-
-    #[serde(rename = "status")]
-    status: NetworkType,
-
-    #[serde(rename = "network_type")]
-    network_type: NetworkType,
+    #[serde(rename = "apis")]
+    apis: Apis,
 
     #[serde(rename = "bech32_prefix")]
     bech32_prefix: Bech32Prefix,
 
-    #[serde(rename = "genesis")]
-    genesis: Genesis,
+    #[serde(rename = "chain_id")]
+    chain_id: Bech32Prefix,
 
-    #[serde(rename = "daemon_name")]
-    daemon_name: Bech32Prefix,
-
-    #[serde(rename = "node_home")]
-    node_home: Bech32Prefix,
-
-    #[serde(rename = "key_algos")]
-    key_algos: KeyAlgos,
-
-    #[serde(rename = "slip44")]
-    slip44: Bech32Prefix,
-
-    #[serde(rename = "fees")]
-    fees: Fees,
+    #[serde(rename = "chain_name")]
+    chain_name: Bech32Prefix,
 
     #[serde(rename = "codebase")]
     codebase: Codebase,
 
-    #[serde(rename = "peers")]
-    peers: Peers,
-
-    #[serde(rename = "apis")]
-    apis: Apis,
+    #[serde(rename = "daemon_name")]
+    daemon_name: Bech32Prefix,
 
     #[serde(rename = "explorers")]
     explorers: Explorers,
+
+    #[serde(rename = "fees")]
+    fees: Fees,
+
+    #[serde(rename = "genesis")]
+    genesis: Genesis,
+
+    #[serde(rename = "key_algos")]
+    key_algos: KeyAlgos,
+
+    #[serde(rename = "network_type")]
+    network_type: NetworkType,
+
+    #[serde(rename = "node_home")]
+    node_home: Bech32Prefix,
+
+    #[serde(rename = "peers")]
+    peers: Peers,
+
+    #[serde(rename = "pretty_name")]
+    pretty_name: Bech32Prefix,
+
+    #[serde(rename = "slip44")]
+    slip44: Bech32Prefix,
+
+    #[serde(rename = "status")]
+    status: NetworkType,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -243,14 +243,14 @@ pub struct Apis {
 
 #[derive(Serialize, Deserialize)]
 pub struct ApisProperties {
-    #[serde(rename = "rpc")]
-    rpc: Explorers,
+    #[serde(rename = "grpc")]
+    grpc: Explorers,
 
     #[serde(rename = "rest")]
     rest: Explorers,
 
-    #[serde(rename = "grpc")]
-    grpc: Explorers,
+    #[serde(rename = "rpc")]
+    rpc: Explorers,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -273,26 +273,26 @@ pub struct Codebase {
     #[serde(rename = "type")]
     codebase_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: CodebaseProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct CodebaseProperties {
+    #[serde(rename = "binaries")]
+    binaries: Binaries,
+
+    #[serde(rename = "compatible_versions")]
+    compatible_versions: CompatibleVersions,
+
     #[serde(rename = "git_repo")]
     git_repo: Png,
 
     #[serde(rename = "recommended_version")]
     recommended_version: Bech32Prefix,
-
-    #[serde(rename = "compatible_versions")]
-    compatible_versions: CompatibleVersions,
-
-    #[serde(rename = "binaries")]
-    binaries: Binaries,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -351,20 +351,20 @@ pub struct GenesisProperties {
 
 #[derive(Serialize, Deserialize)]
 pub struct KeyAlgos {
-    #[serde(rename = "type")]
-    key_algos_type: String,
-
     #[serde(rename = "items")]
     items: KeyAlgosItems,
+
+    #[serde(rename = "type")]
+    key_algos_type: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct KeyAlgosItems {
-    #[serde(rename = "type")]
-    items_type: Type,
-
     #[serde(rename = "enum")]
     items_enum: Vec<String>,
+
+    #[serde(rename = "type")]
+    items_type: Type,
 
     #[serde(rename = "uniqueItems")]
     unique_items: bool,
@@ -387,11 +387,11 @@ pub struct Peers {
 
 #[derive(Serialize, Deserialize)]
 pub struct PeersProperties {
-    #[serde(rename = "seeds")]
-    seeds: Explorers,
-
     #[serde(rename = "persistent_peers")]
     persistent_peers: Explorers,
+
+    #[serde(rename = "seeds")]
+    seeds: Explorers,
 }
 
 #[derive(Serialize, Deserialize)]

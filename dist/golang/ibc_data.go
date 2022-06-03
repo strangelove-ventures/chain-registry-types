@@ -19,10 +19,10 @@ func (r *IbcData) Marshal() ([]byte, error) {
 }
 
 type IbcData struct {
+	Properties IbcDataProperties `json:"properties"`
+	Required   []string          `json:"required"`  
 	Schema     string            `json:"$schema"`   
 	Type       string            `json:"type"`      
-	Required   []string          `json:"required"`  
-	Properties IbcDataProperties `json:"properties"`
 }
 
 type IbcDataProperties struct {
@@ -33,9 +33,9 @@ type IbcDataProperties struct {
 }
 
 type PurpleChain struct {
-	Type        string `json:"type"`       
 	Description string `json:"description"`
 	Items       Items  `json:"items"`      
+	Type        string `json:"type"`       
 }
 
 type Items struct {
@@ -43,51 +43,51 @@ type Items struct {
 }
 
 type Channels struct {
-	Type  string `json:"type"` 
 	Items []Item `json:"items"`
+	Type  string `json:"type"` 
 }
 
 type Item struct {
-	Type       string         `json:"type"`      
-	Required   []string       `json:"required"`  
 	Properties ItemProperties `json:"properties"`
+	Required   []string       `json:"required"`  
+	Type       string         `json:"type"`      
 }
 
 type ItemProperties struct {
 	Chain1      FluffyChain `json:"chain-1"`    
 	Chain2      FluffyChain `json:"chain-2"`    
-	Ordering    Ordering    `json:"ordering"`   
-	Version     ClientID    `json:"version"`    
 	Description ClientID    `json:"description"`
+	Ordering    Ordering    `json:"ordering"`   
 	Tags        Tags        `json:"tags"`       
+	Version     ClientID    `json:"version"`    
 }
 
 type FluffyChain struct {
-	Type  string `json:"type"` 
 	Items Items  `json:"items"`
+	Type  string `json:"type"` 
 }
 
 type ClientID struct {
-	Type        string `json:"type"`       
 	Description string `json:"description"`
+	Type        string `json:"type"`       
 }
 
 type Ordering struct {
-	Enum        []string `json:"enum"`       
 	Description string   `json:"description"`
+	Enum        []string `json:"enum"`       
 }
 
 type Tags struct {
-	Type        string         `json:"type"`       
 	Description string         `json:"description"`
 	Properties  TagsProperties `json:"properties"` 
+	Type        string         `json:"type"`       
 }
 
 type TagsProperties struct {
-	Status     Status    `json:"status"`    
-	Preferred  ChainName `json:"preferred"` 
 	Dex        ChainName `json:"dex"`       
+	Preferred  ChainName `json:"preferred"` 
 	Properties ClientID  `json:"properties"`
+	Status     Status    `json:"status"`    
 }
 
 type ChainName struct {
@@ -104,9 +104,9 @@ type Defs struct {
 }
 
 type ChainInfo struct {
-	Type       string              `json:"type"`      
-	Required   []string            `json:"required"`  
 	Properties ChainInfoProperties `json:"properties"`
+	Required   []string            `json:"required"`  
+	Type       string              `json:"type"`      
 }
 
 type ChainInfoProperties struct {
@@ -116,9 +116,9 @@ type ChainInfoProperties struct {
 }
 
 type ChannelInfo struct {
-	Type       string                `json:"type"`      
-	Required   []string              `json:"required"`  
 	Properties ChannelInfoProperties `json:"properties"`
+	Required   []string              `json:"required"`  
+	Type       string                `json:"type"`      
 }
 
 type ChannelInfoProperties struct {

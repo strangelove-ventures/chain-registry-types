@@ -15,17 +15,17 @@ extern crate serde_derive;
 
 #[derive(Serialize, Deserialize)]
 pub struct IbcData {
-    #[serde(rename = "$schema")]
-    schema: String,
-
     #[serde(rename = "type")]
     ibc_data_type: String,
+
+    #[serde(rename = "properties")]
+    properties: IbcDataProperties,
 
     #[serde(rename = "required")]
     required: Vec<String>,
 
-    #[serde(rename = "properties")]
-    properties: IbcDataProperties,
+    #[serde(rename = "$schema")]
+    schema: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -75,11 +75,11 @@ pub struct Item {
     #[serde(rename = "type")]
     item_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: ItemProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -90,17 +90,17 @@ pub struct ItemProperties {
     #[serde(rename = "chain-2")]
     chain_2: FluffyChain,
 
-    #[serde(rename = "ordering")]
-    ordering: Ordering,
-
-    #[serde(rename = "version")]
-    version: ClientId,
-
     #[serde(rename = "description")]
     description: ClientId,
 
+    #[serde(rename = "ordering")]
+    ordering: Ordering,
+
     #[serde(rename = "tags")]
     tags: Tags,
+
+    #[serde(rename = "version")]
+    version: ClientId,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -123,38 +123,38 @@ pub struct ClientId {
 
 #[derive(Serialize, Deserialize)]
 pub struct Ordering {
-    #[serde(rename = "enum")]
-    ordering_enum: Vec<String>,
-
     #[serde(rename = "description")]
     description: String,
+
+    #[serde(rename = "enum")]
+    ordering_enum: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Tags {
-    #[serde(rename = "type")]
-    tags_type: String,
-
     #[serde(rename = "description")]
     description: String,
 
     #[serde(rename = "properties")]
     properties: TagsProperties,
+
+    #[serde(rename = "type")]
+    tags_type: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct TagsProperties {
-    #[serde(rename = "status")]
-    status: Status,
+    #[serde(rename = "dex")]
+    dex: ChainName,
 
     #[serde(rename = "preferred")]
     preferred: ChainName,
 
-    #[serde(rename = "dex")]
-    dex: ChainName,
-
     #[serde(rename = "properties")]
     properties: ClientId,
+
+    #[serde(rename = "status")]
+    status: Status,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -183,11 +183,11 @@ pub struct ChainInfo {
     #[serde(rename = "type")]
     chain_info_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: ChainInfoProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -207,11 +207,11 @@ pub struct ChannelInfo {
     #[serde(rename = "type")]
     channel_info_type: String,
 
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
     #[serde(rename = "properties")]
     properties: ChannelInfoProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 }
 
 #[derive(Serialize, Deserialize)]

@@ -8,14 +8,14 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface Assetlist {
+    $defs:       Defs;
     $id:         string;
     $schema:     string;
-    title:       string;
     description: string;
-    type:        string;
-    required:    string[];
     properties:  AssetlistProperties;
-    $defs:       Defs;
+    required:    string[];
+    title:       string;
+    type:        string;
 }
 
 export interface Defs {
@@ -24,11 +24,11 @@ export interface Defs {
 }
 
 export interface Asset {
-    type:       string;
-    required:   string[];
-    properties: AssetProperties;
     if:         If;
+    properties: AssetProperties;
+    required:   string[];
     then:       Then;
+    type:       string;
 }
 
 export interface If {
@@ -45,27 +45,27 @@ export interface PurpleTypeAsset {
 }
 
 export interface AssetProperties {
-    description:  Address;
-    denom_units:  Assets;
-    type_asset:   FluffyTypeAsset;
     address:      Address;
     base:         Address;
-    name:         Address;
+    coingecko_id: Address;
+    denom_units:  Assets;
+    description:  Address;
     display:      Address;
-    symbol:       Address;
     ibc:          Ibc;
     logo_URIs:    LogoURIs;
-    coingecko_id: Address;
+    name:         Address;
+    symbol:       Address;
+    type_asset:   FluffyTypeAsset;
 }
 
 export interface Address {
-    type:        string;
     description: string;
+    type:        string;
 }
 
 export interface Assets {
-    type:  string;
     items: Items;
+    type:  string;
 }
 
 export interface Items {
@@ -73,15 +73,15 @@ export interface Items {
 }
 
 export interface Ibc {
-    type:        string;
     description: string;
     properties:  IbcProperties;
     required:    string[];
+    type:        string;
 }
 
 export interface IbcProperties {
-    source_channel: ChainName;
     dst_channel:    ChainName;
+    source_channel: ChainName;
     source_denom:   ChainName;
 }
 
@@ -90,8 +90,8 @@ export interface ChainName {
 }
 
 export interface LogoURIs {
-    type:       string;
     properties: LogoURIsProperties;
+    type:       string;
 }
 
 export interface LogoURIsProperties {
@@ -100,15 +100,15 @@ export interface LogoURIsProperties {
 }
 
 export interface PNG {
-    type:   string;
     format: string;
+    type:   string;
 }
 
 export interface FluffyTypeAsset {
-    type:        string;
-    enum:        string[];
     default:     string;
     description: string;
+    enum:        string[];
+    type:        string;
 }
 
 export interface Then {
@@ -116,25 +116,25 @@ export interface Then {
 }
 
 export interface DenomUnit {
-    type:       string;
     properties: DenomUnitProperties;
     required:   string[];
+    type:       string;
 }
 
 export interface DenomUnitProperties {
+    aliases:  Aliases;
     denom:    ChainName;
     exponent: ChainName;
-    aliases:  Aliases;
 }
 
 export interface Aliases {
-    type:  string;
     items: ChainName;
+    type:  string;
 }
 
 export interface AssetlistProperties {
-    chain_name: ChainName;
     assets:     Assets;
+    chain_name: ChainName;
 }
 
 // Converts JSON strings to/from your types
@@ -283,25 +283,25 @@ function r(name: string) {
 
 const typeMap: any = {
     "Assetlist": o([
+        { json: "$defs", js: "$defs", typ: r("Defs") },
         { json: "$id", js: "$id", typ: "" },
         { json: "$schema", js: "$schema", typ: "" },
-        { json: "title", js: "title", typ: "" },
         { json: "description", js: "description", typ: "" },
-        { json: "type", js: "type", typ: "" },
-        { json: "required", js: "required", typ: a("") },
         { json: "properties", js: "properties", typ: r("AssetlistProperties") },
-        { json: "$defs", js: "$defs", typ: r("Defs") },
+        { json: "required", js: "required", typ: a("") },
+        { json: "title", js: "title", typ: "" },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Defs": o([
         { json: "asset", js: "asset", typ: r("Asset") },
         { json: "denom_unit", js: "denom_unit", typ: r("DenomUnit") },
     ], false),
     "Asset": o([
-        { json: "type", js: "type", typ: "" },
-        { json: "required", js: "required", typ: a("") },
-        { json: "properties", js: "properties", typ: r("AssetProperties") },
         { json: "if", js: "if", typ: r("If") },
+        { json: "properties", js: "properties", typ: r("AssetProperties") },
+        { json: "required", js: "required", typ: a("") },
         { json: "then", js: "then", typ: r("Then") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "If": o([
         { json: "properties", js: "properties", typ: r("IfProperties") },
@@ -314,80 +314,80 @@ const typeMap: any = {
         { json: "enum", js: "enum", typ: a("") },
     ], false),
     "AssetProperties": o([
-        { json: "description", js: "description", typ: r("Address") },
-        { json: "denom_units", js: "denom_units", typ: r("Assets") },
-        { json: "type_asset", js: "type_asset", typ: r("FluffyTypeAsset") },
         { json: "address", js: "address", typ: r("Address") },
         { json: "base", js: "base", typ: r("Address") },
-        { json: "name", js: "name", typ: r("Address") },
+        { json: "coingecko_id", js: "coingecko_id", typ: r("Address") },
+        { json: "denom_units", js: "denom_units", typ: r("Assets") },
+        { json: "description", js: "description", typ: r("Address") },
         { json: "display", js: "display", typ: r("Address") },
-        { json: "symbol", js: "symbol", typ: r("Address") },
         { json: "ibc", js: "ibc", typ: r("Ibc") },
         { json: "logo_URIs", js: "logo_URIs", typ: r("LogoURIs") },
-        { json: "coingecko_id", js: "coingecko_id", typ: r("Address") },
+        { json: "name", js: "name", typ: r("Address") },
+        { json: "symbol", js: "symbol", typ: r("Address") },
+        { json: "type_asset", js: "type_asset", typ: r("FluffyTypeAsset") },
     ], false),
     "Address": o([
-        { json: "type", js: "type", typ: "" },
         { json: "description", js: "description", typ: "" },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Assets": o([
-        { json: "type", js: "type", typ: "" },
         { json: "items", js: "items", typ: r("Items") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Items": o([
         { json: "$ref", js: "$ref", typ: "" },
     ], false),
     "Ibc": o([
-        { json: "type", js: "type", typ: "" },
         { json: "description", js: "description", typ: "" },
         { json: "properties", js: "properties", typ: r("IbcProperties") },
         { json: "required", js: "required", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "IbcProperties": o([
-        { json: "source_channel", js: "source_channel", typ: r("ChainName") },
         { json: "dst_channel", js: "dst_channel", typ: r("ChainName") },
+        { json: "source_channel", js: "source_channel", typ: r("ChainName") },
         { json: "source_denom", js: "source_denom", typ: r("ChainName") },
     ], false),
     "ChainName": o([
         { json: "type", js: "type", typ: "" },
     ], false),
     "LogoURIs": o([
-        { json: "type", js: "type", typ: "" },
         { json: "properties", js: "properties", typ: r("LogoURIsProperties") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "LogoURIsProperties": o([
         { json: "png", js: "png", typ: r("PNG") },
         { json: "svg", js: "svg", typ: r("PNG") },
     ], false),
     "PNG": o([
-        { json: "type", js: "type", typ: "" },
         { json: "format", js: "format", typ: "" },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "FluffyTypeAsset": o([
-        { json: "type", js: "type", typ: "" },
-        { json: "enum", js: "enum", typ: a("") },
         { json: "default", js: "default", typ: "" },
         { json: "description", js: "description", typ: "" },
+        { json: "enum", js: "enum", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Then": o([
         { json: "required", js: "required", typ: a("") },
     ], false),
     "DenomUnit": o([
-        { json: "type", js: "type", typ: "" },
         { json: "properties", js: "properties", typ: r("DenomUnitProperties") },
         { json: "required", js: "required", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "DenomUnitProperties": o([
+        { json: "aliases", js: "aliases", typ: r("Aliases") },
         { json: "denom", js: "denom", typ: r("ChainName") },
         { json: "exponent", js: "exponent", typ: r("ChainName") },
-        { json: "aliases", js: "aliases", typ: r("Aliases") },
     ], false),
     "Aliases": o([
-        { json: "type", js: "type", typ: "" },
         { json: "items", js: "items", typ: r("ChainName") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "AssetlistProperties": o([
-        { json: "chain_name", js: "chain_name", typ: r("ChainName") },
         { json: "assets", js: "assets", typ: r("Assets") },
+        { json: "chain_name", js: "chain_name", typ: r("ChainName") },
     ], false),
 };

@@ -19,14 +19,14 @@ func (r *Assetlist) Marshal() ([]byte, error) {
 }
 
 type Assetlist struct {
+	Defs        Defs                `json:"$defs"`      
+	Description string              `json:"description"`
 	ID          string              `json:"$id"`        
+	Properties  AssetlistProperties `json:"properties"` 
+	Required    []string            `json:"required"`   
 	Schema      string              `json:"$schema"`    
 	Title       string              `json:"title"`      
-	Description string              `json:"description"`
 	Type        string              `json:"type"`       
-	Required    []string            `json:"required"`   
-	Properties  AssetlistProperties `json:"properties"` 
-	Defs        Defs                `json:"$defs"`      
 }
 
 type Defs struct {
@@ -35,11 +35,11 @@ type Defs struct {
 }
 
 type Asset struct {
-	Type       string          `json:"type"`      
-	Required   []string        `json:"required"`  
-	Properties AssetProperties `json:"properties"`
 	If         If              `json:"if"`        
+	Properties AssetProperties `json:"properties"`
+	Required   []string        `json:"required"`  
 	Then       Then            `json:"then"`      
+	Type       string          `json:"type"`      
 }
 
 type If struct {
@@ -56,27 +56,27 @@ type PurpleTypeAsset struct {
 }
 
 type AssetProperties struct {
-	Description Address         `json:"description"` 
-	DenomUnits  Assets          `json:"denom_units"` 
-	TypeAsset   FluffyTypeAsset `json:"type_asset"`  
 	Address     Address         `json:"address"`     
 	Base        Address         `json:"base"`        
-	Name        Address         `json:"name"`        
+	CoingeckoID Address         `json:"coingecko_id"`
+	DenomUnits  Assets          `json:"denom_units"` 
+	Description Address         `json:"description"` 
 	Display     Address         `json:"display"`     
-	Symbol      Address         `json:"symbol"`      
 	Ibc         Ibc             `json:"ibc"`         
 	LogoURIs    LogoURIs        `json:"logo_URIs"`   
-	CoingeckoID Address         `json:"coingecko_id"`
+	Name        Address         `json:"name"`        
+	Symbol      Address         `json:"symbol"`      
+	TypeAsset   FluffyTypeAsset `json:"type_asset"`  
 }
 
 type Address struct {
-	Type        string `json:"type"`       
 	Description string `json:"description"`
+	Type        string `json:"type"`       
 }
 
 type Assets struct {
-	Type  string `json:"type"` 
 	Items Items  `json:"items"`
+	Type  string `json:"type"` 
 }
 
 type Items struct {
@@ -84,15 +84,15 @@ type Items struct {
 }
 
 type Ibc struct {
-	Type        string        `json:"type"`       
 	Description string        `json:"description"`
 	Properties  IbcProperties `json:"properties"` 
 	Required    []string      `json:"required"`   
+	Type        string        `json:"type"`       
 }
 
 type IbcProperties struct {
-	SourceChannel ChainName `json:"source_channel"`
 	DstChannel    ChainName `json:"dst_channel"`   
+	SourceChannel ChainName `json:"source_channel"`
 	SourceDenom   ChainName `json:"source_denom"`  
 }
 
@@ -101,8 +101,8 @@ type ChainName struct {
 }
 
 type LogoURIs struct {
-	Type       string             `json:"type"`      
 	Properties LogoURIsProperties `json:"properties"`
+	Type       string             `json:"type"`      
 }
 
 type LogoURIsProperties struct {
@@ -111,15 +111,15 @@ type LogoURIsProperties struct {
 }
 
 type PNG struct {
-	Type   string `json:"type"`  
 	Format string `json:"format"`
+	Type   string `json:"type"`  
 }
 
 type FluffyTypeAsset struct {
-	Type        string   `json:"type"`       
-	Enum        []string `json:"enum"`       
 	Default     string   `json:"default"`    
 	Description string   `json:"description"`
+	Enum        []string `json:"enum"`       
+	Type        string   `json:"type"`       
 }
 
 type Then struct {
@@ -127,23 +127,23 @@ type Then struct {
 }
 
 type DenomUnit struct {
-	Type       string              `json:"type"`      
 	Properties DenomUnitProperties `json:"properties"`
 	Required   []string            `json:"required"`  
+	Type       string              `json:"type"`      
 }
 
 type DenomUnitProperties struct {
+	Aliases  Aliases   `json:"aliases"` 
 	Denom    ChainName `json:"denom"`   
 	Exponent ChainName `json:"exponent"`
-	Aliases  Aliases   `json:"aliases"` 
 }
 
 type Aliases struct {
-	Type  string    `json:"type"` 
 	Items ChainName `json:"items"`
+	Type  string    `json:"type"` 
 }
 
 type AssetlistProperties struct {
-	ChainName ChainName `json:"chain_name"`
 	Assets    Assets    `json:"assets"`    
+	ChainName ChainName `json:"chain_name"`
 }

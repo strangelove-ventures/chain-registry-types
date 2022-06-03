@@ -19,28 +19,28 @@ func (r *Chain) Marshal() ([]byte, error) {
 }
 
 type Chain struct {
+	Defs        Defs            `json:"$defs"`      
+	Description string          `json:"description"`
 	ID          string          `json:"$id"`        
+	Properties  ChainProperties `json:"properties"` 
+	Required    []string        `json:"required"`   
 	Schema      string          `json:"$schema"`    
 	Title       string          `json:"title"`      
-	Description string          `json:"description"`
 	Type        string          `json:"type"`       
-	Required    []string        `json:"required"`   
-	Properties  ChainProperties `json:"properties"` 
-	Defs        Defs            `json:"$defs"`      
 }
 
 type Defs struct {
-	Peer     Peer     `json:"peer"`     
 	Endpoint Endpoint `json:"endpoint"` 
 	Explorer Explorer `json:"explorer"` 
 	FeeToken FeeToken `json:"fee_token"`
 	LogoURIs LogoURIs `json:"logo_URIs"`
+	Peer     Peer     `json:"peer"`     
 }
 
 type Endpoint struct {
-	Type       string             `json:"type"`      
-	Required   []string           `json:"required"`  
 	Properties EndpointProperties `json:"properties"`
+	Required   []string           `json:"required"`  
+	Type       string             `json:"type"`      
 }
 
 type EndpointProperties struct {
@@ -53,21 +53,21 @@ type Bech32Prefix struct {
 }
 
 type Explorer struct {
-	Type       string             `json:"type"`      
 	Properties ExplorerProperties `json:"properties"`
+	Type       string             `json:"type"`      
 }
 
 type ExplorerProperties struct {
-	Kind        Bech32Prefix `json:"kind"`        
-	URL         Bech32Prefix `json:"url"`         
-	TxPage      Bech32Prefix `json:"tx_page"`     
 	AccountPage Bech32Prefix `json:"account_page"`
+	Kind        Bech32Prefix `json:"kind"`        
+	TxPage      Bech32Prefix `json:"tx_page"`     
+	URL         Bech32Prefix `json:"url"`         
 }
 
 type FeeToken struct {
-	Type       string             `json:"type"`      
-	Required   []string           `json:"required"`  
 	Properties FeeTokenProperties `json:"properties"`
+	Required   []string           `json:"required"`  
+	Type       string             `json:"type"`      
 }
 
 type FeeTokenProperties struct {
@@ -76,8 +76,8 @@ type FeeTokenProperties struct {
 }
 
 type LogoURIs struct {
-	Type       string             `json:"type"`      
 	Properties LogoURIsProperties `json:"properties"`
+	Type       string             `json:"type"`      
 }
 
 type LogoURIsProperties struct {
@@ -86,55 +86,55 @@ type LogoURIsProperties struct {
 }
 
 type PNG struct {
-	Type   Type   `json:"type"`  
 	Format string `json:"format"`
+	Type   Type   `json:"type"`  
 }
 
 type Peer struct {
-	Type       string         `json:"type"`      
-	Required   []string       `json:"required"`  
 	Properties PeerProperties `json:"properties"`
+	Required   []string       `json:"required"`  
+	Type       string         `json:"type"`      
 }
 
 type PeerProperties struct {
-	ID       Bech32Prefix `json:"id"`      
 	Address  Bech32Prefix `json:"address"` 
+	ID       Bech32Prefix `json:"id"`      
 	Provider Bech32Prefix `json:"provider"`
 }
 
 type ChainProperties struct {
-	ChainName    Bech32Prefix `json:"chain_name"`   
-	ChainID      Bech32Prefix `json:"chain_id"`     
-	PrettyName   Bech32Prefix `json:"pretty_name"`  
-	Status       NetworkType  `json:"status"`       
-	NetworkType  NetworkType  `json:"network_type"` 
-	Bech32Prefix Bech32Prefix `json:"bech32_prefix"`
-	Genesis      Genesis      `json:"genesis"`      
-	DaemonName   Bech32Prefix `json:"daemon_name"`  
-	NodeHome     Bech32Prefix `json:"node_home"`    
-	KeyAlgos     KeyAlgos     `json:"key_algos"`    
-	Slip44       Bech32Prefix `json:"slip44"`       
-	Fees         Fees         `json:"fees"`         
-	Codebase     Codebase     `json:"codebase"`     
-	Peers        Peers        `json:"peers"`        
 	Apis         Apis         `json:"apis"`         
+	Bech32Prefix Bech32Prefix `json:"bech32_prefix"`
+	ChainID      Bech32Prefix `json:"chain_id"`     
+	ChainName    Bech32Prefix `json:"chain_name"`   
+	Codebase     Codebase     `json:"codebase"`     
+	DaemonName   Bech32Prefix `json:"daemon_name"`  
 	Explorers    Explorers    `json:"explorers"`    
+	Fees         Fees         `json:"fees"`         
+	Genesis      Genesis      `json:"genesis"`      
+	KeyAlgos     KeyAlgos     `json:"key_algos"`    
+	NetworkType  NetworkType  `json:"network_type"` 
+	NodeHome     Bech32Prefix `json:"node_home"`    
+	Peers        Peers        `json:"peers"`        
+	PrettyName   Bech32Prefix `json:"pretty_name"`  
+	Slip44       Bech32Prefix `json:"slip44"`       
+	Status       NetworkType  `json:"status"`       
 }
 
 type Apis struct {
-	Type       string         `json:"type"`      
 	Properties ApisProperties `json:"properties"`
+	Type       string         `json:"type"`      
 }
 
 type ApisProperties struct {
-	RPC  Explorers `json:"rpc"` 
-	REST Explorers `json:"rest"`
 	Grpc Explorers `json:"grpc"`
+	REST Explorers `json:"rest"`
+	RPC  Explorers `json:"rpc"` 
 }
 
 type Explorers struct {
-	Type  string         `json:"type"` 
 	Items ExplorersItems `json:"items"`
+	Type  string         `json:"type"` 
 }
 
 type ExplorersItems struct {
@@ -142,21 +142,21 @@ type ExplorersItems struct {
 }
 
 type Codebase struct {
-	Type       string             `json:"type"`      
-	Required   []string           `json:"required"`  
 	Properties CodebaseProperties `json:"properties"`
+	Required   []string           `json:"required"`  
+	Type       string             `json:"type"`      
 }
 
 type CodebaseProperties struct {
+	Binaries           Binaries           `json:"binaries"`           
+	CompatibleVersions CompatibleVersions `json:"compatible_versions"`
 	GitRepo            PNG                `json:"git_repo"`           
 	RecommendedVersion Bech32Prefix       `json:"recommended_version"`
-	CompatibleVersions CompatibleVersions `json:"compatible_versions"`
-	Binaries           Binaries           `json:"binaries"`           
 }
 
 type Binaries struct {
-	Type       string             `json:"type"`      
 	Properties BinariesProperties `json:"properties"`
+	Type       string             `json:"type"`      
 }
 
 type BinariesProperties struct {
@@ -164,13 +164,13 @@ type BinariesProperties struct {
 }
 
 type CompatibleVersions struct {
-	Type  string       `json:"type"` 
 	Items Bech32Prefix `json:"items"`
+	Type  string       `json:"type"` 
 }
 
 type Fees struct {
-	Type       string         `json:"type"`      
 	Properties FeesProperties `json:"properties"`
+	Type       string         `json:"type"`      
 }
 
 type FeesProperties struct {
@@ -178,8 +178,8 @@ type FeesProperties struct {
 }
 
 type Genesis struct {
-	Type       string            `json:"type"`      
 	Properties GenesisProperties `json:"properties"`
+	Type       string            `json:"type"`      
 }
 
 type GenesisProperties struct {
@@ -187,13 +187,13 @@ type GenesisProperties struct {
 }
 
 type KeyAlgos struct {
-	Type  string        `json:"type"` 
 	Items KeyAlgosItems `json:"items"`
+	Type  string        `json:"type"` 
 }
 
 type KeyAlgosItems struct {
-	Type        Type     `json:"type"`       
 	Enum        []string `json:"enum"`       
+	Type        Type     `json:"type"`       
 	UniqueItems bool     `json:"uniqueItems"`
 }
 
@@ -202,13 +202,13 @@ type NetworkType struct {
 }
 
 type Peers struct {
-	Type       string          `json:"type"`      
 	Properties PeersProperties `json:"properties"`
+	Type       string          `json:"type"`      
 }
 
 type PeersProperties struct {
-	Seeds           Explorers `json:"seeds"`           
 	PersistentPeers Explorers `json:"persistent_peers"`
+	Seeds           Explorers `json:"seeds"`           
 }
 
 type Type string

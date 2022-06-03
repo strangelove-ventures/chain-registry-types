@@ -15,29 +15,29 @@ extern crate serde_derive;
 
 #[derive(Serialize, Deserialize)]
 pub struct Assetlist {
+    #[serde(rename = "type")]
+    assetlist_type: String,
+
+    #[serde(rename = "$defs")]
+    defs: Defs,
+
+    #[serde(rename = "description")]
+    description: String,
+
     #[serde(rename = "$id")]
     id: String,
+
+    #[serde(rename = "properties")]
+    properties: AssetlistProperties,
+
+    #[serde(rename = "required")]
+    required: Vec<String>,
 
     #[serde(rename = "$schema")]
     schema: String,
 
     #[serde(rename = "title")]
     title: String,
-
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "type")]
-    assetlist_type: String,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
-    #[serde(rename = "properties")]
-    properties: AssetlistProperties,
-
-    #[serde(rename = "$defs")]
-    defs: Defs,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -51,17 +51,17 @@ pub struct Defs {
 
 #[derive(Serialize, Deserialize)]
 pub struct Asset {
+    #[serde(rename = "if")]
+    asset_if: If,
+
     #[serde(rename = "type")]
     asset_type: String,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
 
     #[serde(rename = "properties")]
     properties: AssetProperties,
 
-    #[serde(rename = "if")]
-    asset_if: If,
+    #[serde(rename = "required")]
+    required: Vec<String>,
 
     #[serde(rename = "then")]
     then: Then,
@@ -90,29 +90,23 @@ pub struct PurpleTypeAsset {
 
 #[derive(Serialize, Deserialize)]
 pub struct AssetProperties {
-    #[serde(rename = "description")]
-    description: Address,
-
-    #[serde(rename = "denom_units")]
-    denom_units: Assets,
-
-    #[serde(rename = "type_asset")]
-    type_asset: FluffyTypeAsset,
-
     #[serde(rename = "address")]
     address: Address,
 
     #[serde(rename = "base")]
     base: Address,
 
-    #[serde(rename = "name")]
-    name: Address,
+    #[serde(rename = "coingecko_id")]
+    coingecko_id: Address,
+
+    #[serde(rename = "denom_units")]
+    denom_units: Assets,
+
+    #[serde(rename = "description")]
+    description: Address,
 
     #[serde(rename = "display")]
     display: Address,
-
-    #[serde(rename = "symbol")]
-    symbol: Address,
 
     #[serde(rename = "ibc")]
     ibc: Ibc,
@@ -120,8 +114,14 @@ pub struct AssetProperties {
     #[serde(rename = "logo_URIs")]
     logo_ur_is: LogoUrIs,
 
-    #[serde(rename = "coingecko_id")]
-    coingecko_id: Address,
+    #[serde(rename = "name")]
+    name: Address,
+
+    #[serde(rename = "symbol")]
+    symbol: Address,
+
+    #[serde(rename = "type_asset")]
+    type_asset: FluffyTypeAsset,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -150,11 +150,11 @@ pub struct Items {
 
 #[derive(Serialize, Deserialize)]
 pub struct Ibc {
-    #[serde(rename = "type")]
-    ibc_type: String,
-
     #[serde(rename = "description")]
     description: String,
+
+    #[serde(rename = "type")]
+    ibc_type: String,
 
     #[serde(rename = "properties")]
     properties: IbcProperties,
@@ -165,11 +165,11 @@ pub struct Ibc {
 
 #[derive(Serialize, Deserialize)]
 pub struct IbcProperties {
-    #[serde(rename = "source_channel")]
-    source_channel: ChainName,
-
     #[serde(rename = "dst_channel")]
     dst_channel: ChainName,
+
+    #[serde(rename = "source_channel")]
+    source_channel: ChainName,
 
     #[serde(rename = "source_denom")]
     source_denom: ChainName,
@@ -201,26 +201,26 @@ pub struct LogoUrIsProperties {
 
 #[derive(Serialize, Deserialize)]
 pub struct Png {
-    #[serde(rename = "type")]
-    png_type: String,
-
     #[serde(rename = "format")]
     format: String,
+
+    #[serde(rename = "type")]
+    png_type: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct FluffyTypeAsset {
-    #[serde(rename = "type")]
-    type_asset_type: String,
-
-    #[serde(rename = "enum")]
-    type_asset_enum: Vec<String>,
+    #[serde(rename = "description")]
+    description: String,
 
     #[serde(rename = "default")]
     type_asset_default: String,
 
-    #[serde(rename = "description")]
-    description: String,
+    #[serde(rename = "enum")]
+    type_asset_enum: Vec<String>,
+
+    #[serde(rename = "type")]
+    type_asset_type: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -243,14 +243,14 @@ pub struct DenomUnit {
 
 #[derive(Serialize, Deserialize)]
 pub struct DenomUnitProperties {
+    #[serde(rename = "aliases")]
+    aliases: Aliases,
+
     #[serde(rename = "denom")]
     denom: ChainName,
 
     #[serde(rename = "exponent")]
     exponent: ChainName,
-
-    #[serde(rename = "aliases")]
-    aliases: Aliases,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -264,9 +264,9 @@ pub struct Aliases {
 
 #[derive(Serialize, Deserialize)]
 pub struct AssetlistProperties {
-    #[serde(rename = "chain_name")]
-    chain_name: ChainName,
-
     #[serde(rename = "assets")]
     assets: Assets,
+
+    #[serde(rename = "chain_name")]
+    chain_name: ChainName,
 }

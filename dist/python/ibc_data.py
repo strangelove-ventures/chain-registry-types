@@ -46,94 +46,94 @@ class Items:
 
 
 class PurpleChain:
-    type: str
     description: str
     items: Items
+    type: str
 
-    def __init__(self, type: str, description: str, items: Items) -> None:
-        self.type = type
+    def __init__(self, description: str, items: Items, type: str) -> None:
         self.description = description
         self.items = items
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'PurpleChain':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
         description = from_str(obj.get("description"))
         items = Items.from_dict(obj.get("items"))
-        return PurpleChain(type, description, items)
+        type = from_str(obj.get("type"))
+        return PurpleChain(description, items, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
         result["description"] = from_str(self.description)
         result["items"] = to_class(Items, self.items)
+        result["type"] = from_str(self.type)
         return result
 
 
 class FluffyChain:
-    type: str
     items: Items
+    type: str
 
-    def __init__(self, type: str, items: Items) -> None:
-        self.type = type
+    def __init__(self, items: Items, type: str) -> None:
         self.items = items
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'FluffyChain':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
         items = Items.from_dict(obj.get("items"))
-        return FluffyChain(type, items)
+        type = from_str(obj.get("type"))
+        return FluffyChain(items, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
         result["items"] = to_class(Items, self.items)
+        result["type"] = from_str(self.type)
         return result
 
 
 class ClientID:
-    type: str
     description: str
+    type: str
 
-    def __init__(self, type: str, description: str) -> None:
-        self.type = type
+    def __init__(self, description: str, type: str) -> None:
         self.description = description
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'ClientID':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
         description = from_str(obj.get("description"))
-        return ClientID(type, description)
+        type = from_str(obj.get("type"))
+        return ClientID(description, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
         result["description"] = from_str(self.description)
+        result["type"] = from_str(self.type)
         return result
 
 
 class Ordering:
-    enum: List[str]
     description: str
+    enum: List[str]
 
-    def __init__(self, enum: List[str], description: str) -> None:
-        self.enum = enum
+    def __init__(self, description: str, enum: List[str]) -> None:
         self.description = description
+        self.enum = enum
 
     @staticmethod
     def from_dict(obj: Any) -> 'Ordering':
         assert isinstance(obj, dict)
-        enum = from_list(from_str, obj.get("enum"))
         description = from_str(obj.get("description"))
-        return Ordering(enum, description)
+        enum = from_list(from_str, obj.get("enum"))
+        return Ordering(description, enum)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["enum"] = from_list(from_str, self.enum)
         result["description"] = from_str(self.description)
+        result["enum"] = from_list(from_str, self.enum)
         return result
 
 
@@ -174,144 +174,144 @@ class Status:
 
 
 class TagsProperties:
-    status: Status
-    preferred: ChainName
     dex: ChainName
+    preferred: ChainName
     properties: ClientID
+    status: Status
 
-    def __init__(self, status: Status, preferred: ChainName, dex: ChainName, properties: ClientID) -> None:
-        self.status = status
-        self.preferred = preferred
+    def __init__(self, dex: ChainName, preferred: ChainName, properties: ClientID, status: Status) -> None:
         self.dex = dex
+        self.preferred = preferred
         self.properties = properties
+        self.status = status
 
     @staticmethod
     def from_dict(obj: Any) -> 'TagsProperties':
         assert isinstance(obj, dict)
-        status = Status.from_dict(obj.get("status"))
-        preferred = ChainName.from_dict(obj.get("preferred"))
         dex = ChainName.from_dict(obj.get("dex"))
+        preferred = ChainName.from_dict(obj.get("preferred"))
         properties = ClientID.from_dict(obj.get("properties"))
-        return TagsProperties(status, preferred, dex, properties)
+        status = Status.from_dict(obj.get("status"))
+        return TagsProperties(dex, preferred, properties, status)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["status"] = to_class(Status, self.status)
-        result["preferred"] = to_class(ChainName, self.preferred)
         result["dex"] = to_class(ChainName, self.dex)
+        result["preferred"] = to_class(ChainName, self.preferred)
         result["properties"] = to_class(ClientID, self.properties)
+        result["status"] = to_class(Status, self.status)
         return result
 
 
 class Tags:
-    type: str
     description: str
     properties: TagsProperties
+    type: str
 
-    def __init__(self, type: str, description: str, properties: TagsProperties) -> None:
-        self.type = type
+    def __init__(self, description: str, properties: TagsProperties, type: str) -> None:
         self.description = description
         self.properties = properties
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'Tags':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
         description = from_str(obj.get("description"))
         properties = TagsProperties.from_dict(obj.get("properties"))
-        return Tags(type, description, properties)
+        type = from_str(obj.get("type"))
+        return Tags(description, properties, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
         result["description"] = from_str(self.description)
         result["properties"] = to_class(TagsProperties, self.properties)
+        result["type"] = from_str(self.type)
         return result
 
 
 class ItemProperties:
     chain_1: FluffyChain
     chain_2: FluffyChain
-    ordering: Ordering
-    version: ClientID
     description: ClientID
+    ordering: Ordering
     tags: Tags
+    version: ClientID
 
-    def __init__(self, chain_1: FluffyChain, chain_2: FluffyChain, ordering: Ordering, version: ClientID, description: ClientID, tags: Tags) -> None:
+    def __init__(self, chain_1: FluffyChain, chain_2: FluffyChain, description: ClientID, ordering: Ordering, tags: Tags, version: ClientID) -> None:
         self.chain_1 = chain_1
         self.chain_2 = chain_2
-        self.ordering = ordering
-        self.version = version
         self.description = description
+        self.ordering = ordering
         self.tags = tags
+        self.version = version
 
     @staticmethod
     def from_dict(obj: Any) -> 'ItemProperties':
         assert isinstance(obj, dict)
         chain_1 = FluffyChain.from_dict(obj.get("chain-1"))
         chain_2 = FluffyChain.from_dict(obj.get("chain-2"))
-        ordering = Ordering.from_dict(obj.get("ordering"))
-        version = ClientID.from_dict(obj.get("version"))
         description = ClientID.from_dict(obj.get("description"))
+        ordering = Ordering.from_dict(obj.get("ordering"))
         tags = Tags.from_dict(obj.get("tags"))
-        return ItemProperties(chain_1, chain_2, ordering, version, description, tags)
+        version = ClientID.from_dict(obj.get("version"))
+        return ItemProperties(chain_1, chain_2, description, ordering, tags, version)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["chain-1"] = to_class(FluffyChain, self.chain_1)
         result["chain-2"] = to_class(FluffyChain, self.chain_2)
-        result["ordering"] = to_class(Ordering, self.ordering)
-        result["version"] = to_class(ClientID, self.version)
         result["description"] = to_class(ClientID, self.description)
+        result["ordering"] = to_class(Ordering, self.ordering)
         result["tags"] = to_class(Tags, self.tags)
+        result["version"] = to_class(ClientID, self.version)
         return result
 
 
 class Item:
-    type: str
-    required: List[str]
     properties: ItemProperties
+    required: List[str]
+    type: str
 
-    def __init__(self, type: str, required: List[str], properties: ItemProperties) -> None:
-        self.type = type
-        self.required = required
+    def __init__(self, properties: ItemProperties, required: List[str], type: str) -> None:
         self.properties = properties
+        self.required = required
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'Item':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
-        required = from_list(from_str, obj.get("required"))
         properties = ItemProperties.from_dict(obj.get("properties"))
-        return Item(type, required, properties)
+        required = from_list(from_str, obj.get("required"))
+        type = from_str(obj.get("type"))
+        return Item(properties, required, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
-        result["required"] = from_list(from_str, self.required)
         result["properties"] = to_class(ItemProperties, self.properties)
+        result["required"] = from_list(from_str, self.required)
+        result["type"] = from_str(self.type)
         return result
 
 
 class Channels:
-    type: str
     items: List[Item]
+    type: str
 
-    def __init__(self, type: str, items: List[Item]) -> None:
-        self.type = type
+    def __init__(self, items: List[Item], type: str) -> None:
         self.items = items
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'Channels':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
         items = from_list(Item.from_dict, obj.get("items"))
-        return Channels(type, items)
+        type = from_str(obj.get("type"))
+        return Channels(items, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
         result["items"] = from_list(lambda x: to_class(Item, x), self.items)
+        result["type"] = from_str(self.type)
         return result
 
 
@@ -342,28 +342,28 @@ class ChainInfoProperties:
 
 
 class ChainInfo:
-    type: str
-    required: List[str]
     properties: ChainInfoProperties
+    required: List[str]
+    type: str
 
-    def __init__(self, type: str, required: List[str], properties: ChainInfoProperties) -> None:
-        self.type = type
-        self.required = required
+    def __init__(self, properties: ChainInfoProperties, required: List[str], type: str) -> None:
         self.properties = properties
+        self.required = required
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'ChainInfo':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
-        required = from_list(from_str, obj.get("required"))
         properties = ChainInfoProperties.from_dict(obj.get("properties"))
-        return ChainInfo(type, required, properties)
+        required = from_list(from_str, obj.get("required"))
+        type = from_str(obj.get("type"))
+        return ChainInfo(properties, required, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
-        result["required"] = from_list(from_str, self.required)
         result["properties"] = to_class(ChainInfoProperties, self.properties)
+        result["required"] = from_list(from_str, self.required)
+        result["type"] = from_str(self.type)
         return result
 
 
@@ -390,28 +390,28 @@ class ChannelInfoProperties:
 
 
 class ChannelInfo:
-    type: str
-    required: List[str]
     properties: ChannelInfoProperties
+    required: List[str]
+    type: str
 
-    def __init__(self, type: str, required: List[str], properties: ChannelInfoProperties) -> None:
-        self.type = type
-        self.required = required
+    def __init__(self, properties: ChannelInfoProperties, required: List[str], type: str) -> None:
         self.properties = properties
+        self.required = required
+        self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'ChannelInfo':
         assert isinstance(obj, dict)
-        type = from_str(obj.get("type"))
-        required = from_list(from_str, obj.get("required"))
         properties = ChannelInfoProperties.from_dict(obj.get("properties"))
-        return ChannelInfo(type, required, properties)
+        required = from_list(from_str, obj.get("required"))
+        type = from_str(obj.get("type"))
+        return ChannelInfo(properties, required, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = from_str(self.type)
-        result["required"] = from_list(from_str, self.required)
         result["properties"] = to_class(ChannelInfoProperties, self.properties)
+        result["required"] = from_list(from_str, self.required)
+        result["type"] = from_str(self.type)
         return result
 
 
@@ -468,32 +468,32 @@ class IbcDataProperties:
 
 
 class IbcData:
+    properties: IbcDataProperties
+    required: List[str]
     schema: str
     type: str
-    required: List[str]
-    properties: IbcDataProperties
 
-    def __init__(self, schema: str, type: str, required: List[str], properties: IbcDataProperties) -> None:
+    def __init__(self, properties: IbcDataProperties, required: List[str], schema: str, type: str) -> None:
+        self.properties = properties
+        self.required = required
         self.schema = schema
         self.type = type
-        self.required = required
-        self.properties = properties
 
     @staticmethod
     def from_dict(obj: Any) -> 'IbcData':
         assert isinstance(obj, dict)
+        properties = IbcDataProperties.from_dict(obj.get("properties"))
+        required = from_list(from_str, obj.get("required"))
         schema = from_str(obj.get("$schema"))
         type = from_str(obj.get("type"))
-        required = from_list(from_str, obj.get("required"))
-        properties = IbcDataProperties.from_dict(obj.get("properties"))
-        return IbcData(schema, type, required, properties)
+        return IbcData(properties, required, schema, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
+        result["properties"] = to_class(IbcDataProperties, self.properties)
+        result["required"] = from_list(from_str, self.required)
         result["$schema"] = from_str(self.schema)
         result["type"] = from_str(self.type)
-        result["required"] = from_list(from_str, self.required)
-        result["properties"] = to_class(IbcDataProperties, self.properties)
         return result
 
 

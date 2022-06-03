@@ -9,16 +9,16 @@
 
 export interface IbcData {
     $schema:    string;
-    type:       string;
-    required:   string[];
     properties: IbcDataProperties;
+    required:   string[];
+    type:       string;
 }
 
 export interface IbcDataProperties {
+    $defs:     Defs;
     "chain-1": PurpleChain;
     "chain-2": PurpleChain;
     channels:  Channels;
-    $defs:     Defs;
 }
 
 export interface Defs {
@@ -27,9 +27,9 @@ export interface Defs {
 }
 
 export interface ChainInfo {
-    type:       string;
-    required:   string[];
     properties: ChainInfoProperties;
+    required:   string[];
+    type:       string;
 }
 
 export interface ChainInfoProperties {
@@ -43,14 +43,14 @@ export interface ChainName {
 }
 
 export interface ClientID {
-    type:        string;
     description: string;
+    type:        string;
 }
 
 export interface ChannelInfo {
-    type:       string;
-    required:   string[];
     properties: ChannelInfoProperties;
+    required:   string[];
+    type:       string;
 }
 
 export interface ChannelInfoProperties {
@@ -59,9 +59,9 @@ export interface ChannelInfoProperties {
 }
 
 export interface PurpleChain {
-    type:        string;
     description: string;
     items:       Items;
+    type:        string;
 }
 
 export interface Items {
@@ -69,46 +69,46 @@ export interface Items {
 }
 
 export interface Channels {
-    type:  string;
     items: Item[];
+    type:  string;
 }
 
 export interface Item {
-    type:       string;
-    required:   string[];
     properties: ItemProperties;
+    required:   string[];
+    type:       string;
 }
 
 export interface ItemProperties {
     "chain-1":   FluffyChain;
     "chain-2":   FluffyChain;
-    ordering:    Ordering;
-    version:     ClientID;
     description: ClientID;
+    ordering:    Ordering;
     tags:        Tags;
+    version:     ClientID;
 }
 
 export interface FluffyChain {
-    type:  string;
     items: Items;
+    type:  string;
 }
 
 export interface Ordering {
-    enum:        string[];
     description: string;
+    enum:        string[];
 }
 
 export interface Tags {
-    type:        string;
     description: string;
     properties:  TagsProperties;
+    type:        string;
 }
 
 export interface TagsProperties {
-    status:     Status;
-    preferred:  ChainName;
     dex:        ChainName;
+    preferred:  ChainName;
     properties: ClientID;
+    status:     Status;
 }
 
 export interface Status {
@@ -262,24 +262,24 @@ function r(name: string) {
 const typeMap: any = {
     "IbcData": o([
         { json: "$schema", js: "$schema", typ: "" },
-        { json: "type", js: "type", typ: "" },
-        { json: "required", js: "required", typ: a("") },
         { json: "properties", js: "properties", typ: r("IbcDataProperties") },
+        { json: "required", js: "required", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "IbcDataProperties": o([
+        { json: "$defs", js: "$defs", typ: r("Defs") },
         { json: "chain-1", js: "chain-1", typ: r("PurpleChain") },
         { json: "chain-2", js: "chain-2", typ: r("PurpleChain") },
         { json: "channels", js: "channels", typ: r("Channels") },
-        { json: "$defs", js: "$defs", typ: r("Defs") },
     ], false),
     "Defs": o([
         { json: "chain_info", js: "chain_info", typ: r("ChainInfo") },
         { json: "channel_info", js: "channel_info", typ: r("ChannelInfo") },
     ], false),
     "ChainInfo": o([
-        { json: "type", js: "type", typ: "" },
-        { json: "required", js: "required", typ: a("") },
         { json: "properties", js: "properties", typ: r("ChainInfoProperties") },
+        { json: "required", js: "required", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "ChainInfoProperties": o([
         { json: "chain-name", js: "chain-name", typ: r("ChainName") },
@@ -290,61 +290,61 @@ const typeMap: any = {
         { json: "type", js: "type", typ: "" },
     ], false),
     "ClientID": o([
-        { json: "type", js: "type", typ: "" },
         { json: "description", js: "description", typ: "" },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "ChannelInfo": o([
-        { json: "type", js: "type", typ: "" },
-        { json: "required", js: "required", typ: a("") },
         { json: "properties", js: "properties", typ: r("ChannelInfoProperties") },
+        { json: "required", js: "required", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "ChannelInfoProperties": o([
         { json: "channel-id", js: "channel-id", typ: r("ClientID") },
         { json: "port-id", js: "port-id", typ: r("ClientID") },
     ], false),
     "PurpleChain": o([
-        { json: "type", js: "type", typ: "" },
         { json: "description", js: "description", typ: "" },
         { json: "items", js: "items", typ: r("Items") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Items": o([
         { json: "$refs", js: "$refs", typ: "" },
     ], false),
     "Channels": o([
-        { json: "type", js: "type", typ: "" },
         { json: "items", js: "items", typ: a(r("Item")) },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Item": o([
-        { json: "type", js: "type", typ: "" },
-        { json: "required", js: "required", typ: a("") },
         { json: "properties", js: "properties", typ: r("ItemProperties") },
+        { json: "required", js: "required", typ: a("") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "ItemProperties": o([
         { json: "chain-1", js: "chain-1", typ: r("FluffyChain") },
         { json: "chain-2", js: "chain-2", typ: r("FluffyChain") },
-        { json: "ordering", js: "ordering", typ: r("Ordering") },
-        { json: "version", js: "version", typ: r("ClientID") },
         { json: "description", js: "description", typ: r("ClientID") },
+        { json: "ordering", js: "ordering", typ: r("Ordering") },
         { json: "tags", js: "tags", typ: r("Tags") },
+        { json: "version", js: "version", typ: r("ClientID") },
     ], false),
     "FluffyChain": o([
-        { json: "type", js: "type", typ: "" },
         { json: "items", js: "items", typ: r("Items") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Ordering": o([
-        { json: "enum", js: "enum", typ: a("") },
         { json: "description", js: "description", typ: "" },
+        { json: "enum", js: "enum", typ: a("") },
     ], false),
     "Tags": o([
-        { json: "type", js: "type", typ: "" },
         { json: "description", js: "description", typ: "" },
         { json: "properties", js: "properties", typ: r("TagsProperties") },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "TagsProperties": o([
-        { json: "status", js: "status", typ: r("Status") },
-        { json: "preferred", js: "preferred", typ: r("ChainName") },
         { json: "dex", js: "dex", typ: r("ChainName") },
+        { json: "preferred", js: "preferred", typ: r("ChainName") },
         { json: "properties", js: "properties", typ: r("ClientID") },
+        { json: "status", js: "status", typ: r("Status") },
     ], false),
     "Status": o([
         { json: "enum", js: "enum", typ: a("") },
