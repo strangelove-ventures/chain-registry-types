@@ -2,9 +2,11 @@ ASSETLIST_SCHEMA_URL := https://raw.githubusercontent.com/cosmos/chain-registry/
 CHAIN_SCHEMA_URL := https://raw.githubusercontent.com/cosmos/chain-registry/master/chain.schema.json
 IBC_DATA_SCHEMA_URL := https://raw.githubusercontent.com/cosmos/chain-registry/master/ibc_data.schema.json
 
+DIST_DIRNAMES := golang python rust typescript
+
 prepare:
 	yarn install
-	mkdir -p dist/{golang,python,rust,typescript}/
+	mkdir -p $(foreach dirname,$(DIST_DIRNAMES),dist/$(dirname))
 
 build:
 	./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) --alphabetize-properties --out dist/golang/assetlist.go & \
