@@ -39,26 +39,26 @@ def from_bool(x: Any) -> bool:
     return x
 
 
-class TypeEnum(Enum):
+class Updatelink(Enum):
     NUMBER = "number"
     STRING = "string"
 
 
 class Bech32Prefix:
-    type: TypeEnum
+    type: Updatelink
 
-    def __init__(self, type: TypeEnum) -> None:
+    def __init__(self, type: Updatelink) -> None:
         self.type = type
 
     @staticmethod
     def from_dict(obj: Any) -> 'Bech32Prefix':
         assert isinstance(obj, dict)
-        type = TypeEnum(obj.get("type"))
+        type = Updatelink(obj.get("type"))
         return Bech32Prefix(type)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["type"] = to_enum(TypeEnum, self.type)
+        result["type"] = to_enum(Updatelink, self.type)
         return result
 
 
@@ -212,9 +212,9 @@ class FeeToken:
 
 class PNG:
     format: str
-    type: TypeEnum
+    type: Updatelink
 
-    def __init__(self, format: str, type: TypeEnum) -> None:
+    def __init__(self, format: str, type: Updatelink) -> None:
         self.format = format
         self.type = type
 
@@ -222,13 +222,13 @@ class PNG:
     def from_dict(obj: Any) -> 'PNG':
         assert isinstance(obj, dict)
         format = from_str(obj.get("format"))
-        type = TypeEnum(obj.get("type"))
+        type = Updatelink(obj.get("type"))
         return PNG(format, type)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["format"] = from_str(self.format)
-        result["type"] = to_enum(TypeEnum, self.type)
+        result["type"] = to_enum(Updatelink, self.type)
         return result
 
 
@@ -650,10 +650,10 @@ class Genesis:
 
 class KeyAlgosItems:
     enum: List[str]
-    type: TypeEnum
+    type: Updatelink
     unique_items: bool
 
-    def __init__(self, enum: List[str], type: TypeEnum, unique_items: bool) -> None:
+    def __init__(self, enum: List[str], type: Updatelink, unique_items: bool) -> None:
         self.enum = enum
         self.type = type
         self.unique_items = unique_items
@@ -662,14 +662,14 @@ class KeyAlgosItems:
     def from_dict(obj: Any) -> 'KeyAlgosItems':
         assert isinstance(obj, dict)
         enum = from_list(from_str, obj.get("enum"))
-        type = TypeEnum(obj.get("type"))
+        type = Updatelink(obj.get("type"))
         unique_items = from_bool(obj.get("uniqueItems"))
         return KeyAlgosItems(enum, type, unique_items)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["enum"] = from_list(from_str, self.enum)
-        result["type"] = to_enum(TypeEnum, self.type)
+        result["type"] = to_enum(Updatelink, self.type)
         result["uniqueItems"] = from_bool(self.unique_items)
         return result
 
@@ -845,8 +845,9 @@ class Chain:
     schema: str
     title: str
     type: str
+    updatelink: Updatelink
 
-    def __init__(self, defs: Defs, description: str, id: str, properties: ChainProperties, required: List[str], schema: str, title: str, type: str) -> None:
+    def __init__(self, defs: Defs, description: str, id: str, properties: ChainProperties, required: List[str], schema: str, title: str, type: str, updatelink: Updatelink) -> None:
         self.defs = defs
         self.description = description
         self.id = id
@@ -855,6 +856,7 @@ class Chain:
         self.schema = schema
         self.title = title
         self.type = type
+        self.updatelink = updatelink
 
     @staticmethod
     def from_dict(obj: Any) -> 'Chain':
@@ -867,7 +869,8 @@ class Chain:
         schema = from_str(obj.get("$schema"))
         title = from_str(obj.get("title"))
         type = from_str(obj.get("type"))
-        return Chain(defs, description, id, properties, required, schema, title, type)
+        updatelink = Updatelink(obj.get("updatelink"))
+        return Chain(defs, description, id, properties, required, schema, title, type, updatelink)
 
     def to_dict(self) -> dict:
         result: dict = {}
@@ -879,6 +882,7 @@ class Chain:
         result["$schema"] = from_str(self.schema)
         result["title"] = from_str(self.title)
         result["type"] = from_str(self.type)
+        result["updatelink"] = to_enum(Updatelink, self.updatelink)
         return result
 
 

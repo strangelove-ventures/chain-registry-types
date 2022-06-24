@@ -16,6 +16,7 @@ export interface Chain {
     required:    string[];
     title:       string;
     type:        string;
+    updatelink:  Updatelink;
 }
 
 export interface Defs {
@@ -38,10 +39,10 @@ export interface EndpointProperties {
 }
 
 export interface Bech32Prefix {
-    type: Type;
+    type: Updatelink;
 }
 
-export enum Type {
+export enum Updatelink {
     Number = "number",
     String = "string",
 }
@@ -81,7 +82,7 @@ export interface LogoURIsProperties {
 
 export interface PNG {
     format: string;
-    type:   Type;
+    type:   Updatelink;
 }
 
 export interface Peer {
@@ -187,7 +188,7 @@ export interface KeyAlgos {
 
 export interface KeyAlgosItems {
     enum:        string[];
-    type:        Type;
+    type:        Updatelink;
     uniqueItems: boolean;
 }
 
@@ -359,6 +360,7 @@ const typeMap: any = {
         { json: "required", js: "required", typ: a("") },
         { json: "title", js: "title", typ: "" },
         { json: "type", js: "type", typ: "" },
+        { json: "updatelink", js: "updatelink", typ: r("Updatelink") },
     ], false),
     "Defs": o([
         { json: "endpoint", js: "endpoint", typ: r("Endpoint") },
@@ -377,7 +379,7 @@ const typeMap: any = {
         { json: "provider", js: "provider", typ: r("Bech32Prefix") },
     ], false),
     "Bech32Prefix": o([
-        { json: "type", js: "type", typ: r("Type") },
+        { json: "type", js: "type", typ: r("Updatelink") },
     ], false),
     "Explorer": o([
         { json: "properties", js: "properties", typ: r("ExplorerProperties") },
@@ -408,7 +410,7 @@ const typeMap: any = {
     ], false),
     "PNG": o([
         { json: "format", js: "format", typ: "" },
-        { json: "type", js: "type", typ: r("Type") },
+        { json: "type", js: "type", typ: r("Updatelink") },
     ], false),
     "Peer": o([
         { json: "properties", js: "properties", typ: r("PeerProperties") },
@@ -496,7 +498,7 @@ const typeMap: any = {
     ], false),
     "KeyAlgosItems": o([
         { json: "enum", js: "enum", typ: a("") },
-        { json: "type", js: "type", typ: r("Type") },
+        { json: "type", js: "type", typ: r("Updatelink") },
         { json: "uniqueItems", js: "uniqueItems", typ: true },
     ], false),
     "NetworkType": o([
@@ -510,7 +512,7 @@ const typeMap: any = {
         { json: "persistent_peers", js: "persistent_peers", typ: r("Explorers") },
         { json: "seeds", js: "seeds", typ: r("Explorers") },
     ], false),
-    "Type": [
+    "Updatelink": [
         "number",
         "string",
     ],

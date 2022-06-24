@@ -27,6 +27,7 @@ type Chain struct {
 	Schema      string          `json:"$schema"`    
 	Title       string          `json:"title"`      
 	Type        string          `json:"type"`       
+	Updatelink  Updatelink      `json:"updatelink"` 
 }
 
 type Defs struct {
@@ -49,7 +50,7 @@ type EndpointProperties struct {
 }
 
 type Bech32Prefix struct {
-	Type Type `json:"type"`
+	Type Updatelink `json:"type"`
 }
 
 type Explorer struct {
@@ -86,8 +87,8 @@ type LogoURIsProperties struct {
 }
 
 type PNG struct {
-	Format string `json:"format"`
-	Type   Type   `json:"type"`  
+	Format string     `json:"format"`
+	Type   Updatelink `json:"type"`  
 }
 
 type Peer struct {
@@ -192,9 +193,9 @@ type KeyAlgos struct {
 }
 
 type KeyAlgosItems struct {
-	Enum        []string `json:"enum"`       
-	Type        Type     `json:"type"`       
-	UniqueItems bool     `json:"uniqueItems"`
+	Enum        []string   `json:"enum"`       
+	Type        Updatelink `json:"type"`       
+	UniqueItems bool       `json:"uniqueItems"`
 }
 
 type NetworkType struct {
@@ -211,8 +212,8 @@ type PeersProperties struct {
 	Seeds           Explorers `json:"seeds"`           
 }
 
-type Type string
+type Updatelink string
 const (
-	Number Type = "number"
-	String Type = "string"
+	Number Updatelink = "number"
+	String Updatelink = "string"
 )

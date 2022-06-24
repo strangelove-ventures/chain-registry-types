@@ -38,6 +38,9 @@ pub struct Chain {
 
     #[serde(rename = "title")]
     title: String,
+
+    #[serde(rename = "updatelink")]
+    updatelink: Updatelink,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -82,7 +85,7 @@ pub struct EndpointProperties {
 #[derive(Serialize, Deserialize)]
 pub struct Bech32Prefix {
     #[serde(rename = "type")]
-    bech32_prefix_type: Type,
+    bech32_prefix_type: Updatelink,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -154,7 +157,7 @@ pub struct Png {
     format: String,
 
     #[serde(rename = "type")]
-    png_type: Type,
+    png_type: Updatelink,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -364,7 +367,7 @@ pub struct KeyAlgosItems {
     items_enum: Vec<String>,
 
     #[serde(rename = "type")]
-    items_type: Type,
+    items_type: Updatelink,
 
     #[serde(rename = "uniqueItems")]
     unique_items: bool,
@@ -395,7 +398,7 @@ pub struct PeersProperties {
 }
 
 #[derive(Serialize, Deserialize)]
-pub enum Type {
+pub enum Updatelink {
     #[serde(rename = "number")]
     Number,
 
