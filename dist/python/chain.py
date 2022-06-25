@@ -163,24 +163,36 @@ class Explorer:
 
 
 class FeeTokenProperties:
+    average_gas_price: Bech32Prefix
     denom: Bech32Prefix
     fixed_min_gas_price: Bech32Prefix
+    high_gas_price: Bech32Prefix
+    low_gas_price: Bech32Prefix
 
-    def __init__(self, denom: Bech32Prefix, fixed_min_gas_price: Bech32Prefix) -> None:
+    def __init__(self, average_gas_price: Bech32Prefix, denom: Bech32Prefix, fixed_min_gas_price: Bech32Prefix, high_gas_price: Bech32Prefix, low_gas_price: Bech32Prefix) -> None:
+        self.average_gas_price = average_gas_price
         self.denom = denom
         self.fixed_min_gas_price = fixed_min_gas_price
+        self.high_gas_price = high_gas_price
+        self.low_gas_price = low_gas_price
 
     @staticmethod
     def from_dict(obj: Any) -> 'FeeTokenProperties':
         assert isinstance(obj, dict)
+        average_gas_price = Bech32Prefix.from_dict(obj.get("average_gas_price"))
         denom = Bech32Prefix.from_dict(obj.get("denom"))
         fixed_min_gas_price = Bech32Prefix.from_dict(obj.get("fixed_min_gas_price"))
-        return FeeTokenProperties(denom, fixed_min_gas_price)
+        high_gas_price = Bech32Prefix.from_dict(obj.get("high_gas_price"))
+        low_gas_price = Bech32Prefix.from_dict(obj.get("low_gas_price"))
+        return FeeTokenProperties(average_gas_price, denom, fixed_min_gas_price, high_gas_price, low_gas_price)
 
     def to_dict(self) -> dict:
         result: dict = {}
+        result["average_gas_price"] = to_class(Bech32Prefix, self.average_gas_price)
         result["denom"] = to_class(Bech32Prefix, self.denom)
         result["fixed_min_gas_price"] = to_class(Bech32Prefix, self.fixed_min_gas_price)
+        result["high_gas_price"] = to_class(Bech32Prefix, self.high_gas_price)
+        result["low_gas_price"] = to_class(Bech32Prefix, self.low_gas_price)
         return result
 
 

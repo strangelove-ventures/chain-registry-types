@@ -72,8 +72,11 @@ type FeeToken struct {
 }
 
 type FeeTokenProperties struct {
+	AverageGasPrice  Bech32Prefix `json:"average_gas_price"`  
 	Denom            Bech32Prefix `json:"denom"`              
 	FixedMinGasPrice Bech32Prefix `json:"fixed_min_gas_price"`
+	HighGasPrice     Bech32Prefix `json:"high_gas_price"`     
+	LowGasPrice      Bech32Prefix `json:"low_gas_price"`      
 }
 
 type LogoURIs struct {

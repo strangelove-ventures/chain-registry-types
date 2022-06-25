@@ -66,8 +66,11 @@ export interface FeeToken {
 }
 
 export interface FeeTokenProperties {
+    average_gas_price:   Bech32Prefix;
     denom:               Bech32Prefix;
     fixed_min_gas_price: Bech32Prefix;
+    high_gas_price:      Bech32Prefix;
+    low_gas_price:       Bech32Prefix;
 }
 
 export interface LogoURIs {
@@ -397,8 +400,11 @@ const typeMap: any = {
         { json: "type", js: "type", typ: "" },
     ], false),
     "FeeTokenProperties": o([
+        { json: "average_gas_price", js: "average_gas_price", typ: r("Bech32Prefix") },
         { json: "denom", js: "denom", typ: r("Bech32Prefix") },
         { json: "fixed_min_gas_price", js: "fixed_min_gas_price", typ: r("Bech32Prefix") },
+        { json: "high_gas_price", js: "high_gas_price", typ: r("Bech32Prefix") },
+        { json: "low_gas_price", js: "low_gas_price", typ: r("Bech32Prefix") },
     ], false),
     "LogoURIs": o([
         { json: "properties", js: "properties", typ: r("LogoURIsProperties") },

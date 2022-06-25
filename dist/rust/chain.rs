@@ -126,11 +126,20 @@ pub struct FeeToken {
 
 #[derive(Serialize, Deserialize)]
 pub struct FeeTokenProperties {
+    #[serde(rename = "average_gas_price")]
+    average_gas_price: Bech32Prefix,
+
     #[serde(rename = "denom")]
     denom: Bech32Prefix,
 
     #[serde(rename = "fixed_min_gas_price")]
     fixed_min_gas_price: Bech32Prefix,
+
+    #[serde(rename = "high_gas_price")]
+    high_gas_price: Bech32Prefix,
+
+    #[serde(rename = "low_gas_price")]
+    low_gas_price: Bech32Prefix,
 }
 
 #[derive(Serialize, Deserialize)]
