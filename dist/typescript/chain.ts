@@ -35,6 +35,7 @@ export interface Endpoint {
 
 export interface EndpointProperties {
     address:  Bech32Prefix;
+    archive:  Archive;
     provider: Bech32Prefix;
 }
 
@@ -45,6 +46,11 @@ export interface Bech32Prefix {
 export enum Updatelink {
     Number = "number",
     String = "string",
+}
+
+export interface Archive {
+    default: boolean;
+    type:    string;
 }
 
 export interface Explorer {
@@ -379,10 +385,15 @@ const typeMap: any = {
     ], false),
     "EndpointProperties": o([
         { json: "address", js: "address", typ: r("Bech32Prefix") },
+        { json: "archive", js: "archive", typ: r("Archive") },
         { json: "provider", js: "provider", typ: r("Bech32Prefix") },
     ], false),
     "Bech32Prefix": o([
         { json: "type", js: "type", typ: r("Updatelink") },
+    ], false),
+    "Archive": o([
+        { json: "default", js: "default", typ: true },
+        { json: "type", js: "type", typ: "" },
     ], false),
     "Explorer": o([
         { json: "properties", js: "properties", typ: r("ExplorerProperties") },

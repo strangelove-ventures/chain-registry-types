@@ -46,11 +46,17 @@ type Endpoint struct {
 
 type EndpointProperties struct {
 	Address  Bech32Prefix `json:"address"` 
+	Archive  Archive      `json:"archive"` 
 	Provider Bech32Prefix `json:"provider"`
 }
 
 type Bech32Prefix struct {
 	Type Updatelink `json:"type"`
+}
+
+type Archive struct {
+	Default bool   `json:"default"`
+	Type    string `json:"type"`   
 }
 
 type Explorer struct {

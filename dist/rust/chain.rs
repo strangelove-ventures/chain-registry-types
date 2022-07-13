@@ -78,6 +78,9 @@ pub struct EndpointProperties {
     #[serde(rename = "address")]
     address: Bech32Prefix,
 
+    #[serde(rename = "archive")]
+    archive: Archive,
+
     #[serde(rename = "provider")]
     provider: Bech32Prefix,
 }
@@ -86,6 +89,15 @@ pub struct EndpointProperties {
 pub struct Bech32Prefix {
     #[serde(rename = "type")]
     bech32_prefix_type: Updatelink,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Archive {
+    #[serde(rename = "default")]
+    archive_default: bool,
+
+    #[serde(rename = "type")]
+    archive_type: String,
 }
 
 #[derive(Serialize, Deserialize)]

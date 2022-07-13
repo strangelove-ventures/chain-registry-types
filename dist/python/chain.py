@@ -19,6 +19,16 @@ def to_enum(c: Type[EnumT], x: Any) -> EnumT:
     return x.value
 
 
+def from_bool(x: Any) -> bool:
+    assert isinstance(x, bool)
+    return x
+
+
+def from_str(x: Any) -> str:
+    assert isinstance(x, str)
+    return x
+
+
 def to_class(c: Type[T], x: Any) -> dict:
     assert isinstance(x, c)
     return cast(Any, x).to_dict()
@@ -27,16 +37,6 @@ def to_class(c: Type[T], x: Any) -> dict:
 def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
     assert isinstance(x, list)
     return [f(y) for y in x]
-
-
-def from_str(x: Any) -> str:
-    assert isinstance(x, str)
-    return x
-
-
-def from_bool(x: Any) -> bool:
-    assert isinstance(x, bool)
-    return x
 
 
 class Updatelink(Enum):
@@ -62,24 +62,50 @@ class Bech32Prefix:
         return result
 
 
+class Archive:
+    default: bool
+    type: str
+
+    def __init__(self, default: bool, type: str) -> None:
+        self.default = default
+        self.type = type
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Archive':
+        assert isinstance(obj, dict)
+        default = from_bool(obj.get("default"))
+        type = from_str(obj.get("type"))
+        return Archive(default, type)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["default"] = from_bool(self.default)
+        result["type"] = from_str(self.type)
+        return result
+
+
 class EndpointProperties:
     address: Bech32Prefix
+    archive: Archive
     provider: Bech32Prefix
 
-    def __init__(self, address: Bech32Prefix, provider: Bech32Prefix) -> None:
+    def __init__(self, address: Bech32Prefix, archive: Archive, provider: Bech32Prefix) -> None:
         self.address = address
+        self.archive = archive
         self.provider = provider
 
     @staticmethod
     def from_dict(obj: Any) -> 'EndpointProperties':
         assert isinstance(obj, dict)
         address = Bech32Prefix.from_dict(obj.get("address"))
+        archive = Archive.from_dict(obj.get("archive"))
         provider = Bech32Prefix.from_dict(obj.get("provider"))
-        return EndpointProperties(address, provider)
+        return EndpointProperties(address, archive, provider)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["address"] = to_class(Bech32Prefix, self.address)
+        result["archive"] = to_class(Archive, self.archive)
         result["provider"] = to_class(Bech32Prefix, self.provider)
         return result
 
