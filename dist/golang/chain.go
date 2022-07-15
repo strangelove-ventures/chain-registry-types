@@ -18,211 +18,101 @@ func (r *Chain) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
+// Cosmos Chain.json is a metadata file that contains information about a cosmos sdk based
+// chain.
 type Chain struct {
-	Defs        Defs            `json:"$defs"`      
-	Description string          `json:"description"`
-	ID          string          `json:"$id"`        
-	Properties  ChainProperties `json:"properties"` 
-	Required    []string        `json:"required"`   
-	Schema      string          `json:"$schema"`    
-	Title       string          `json:"title"`      
-	Type        string          `json:"type"`       
-	Updatelink  Updatelink      `json:"updatelink"` 
-}
-
-type Defs struct {
-	Endpoint Endpoint `json:"endpoint"` 
-	Explorer Explorer `json:"explorer"` 
-	FeeToken FeeToken `json:"fee_token"`
-	LogoURIs LogoURIs `json:"logo_URIs"`
-	Peer     Peer     `json:"peer"`     
-}
-
-type Endpoint struct {
-	Properties EndpointProperties `json:"properties"`
-	Required   []string           `json:"required"`  
-	Type       string             `json:"type"`      
-}
-
-type EndpointProperties struct {
-	Address  Bech32Prefix `json:"address"` 
-	Archive  Archive      `json:"archive"` 
-	Provider Bech32Prefix `json:"provider"`
-}
-
-type Bech32Prefix struct {
-	Type Updatelink `json:"type"`
-}
-
-type Archive struct {
-	Default bool   `json:"default"`
-	Type    string `json:"type"`   
-}
-
-type Explorer struct {
-	Properties ExplorerProperties `json:"properties"`
-	Type       string             `json:"type"`      
-}
-
-type ExplorerProperties struct {
-	AccountPage Bech32Prefix `json:"account_page"`
-	Kind        Bech32Prefix `json:"kind"`        
-	TxPage      Bech32Prefix `json:"tx_page"`     
-	URL         Bech32Prefix `json:"url"`         
-}
-
-type FeeToken struct {
-	Properties FeeTokenProperties `json:"properties"`
-	Required   []string           `json:"required"`  
-	Type       string             `json:"type"`      
-}
-
-type FeeTokenProperties struct {
-	AverageGasPrice  Bech32Prefix `json:"average_gas_price"`  
-	Denom            Bech32Prefix `json:"denom"`              
-	FixedMinGasPrice Bech32Prefix `json:"fixed_min_gas_price"`
-	HighGasPrice     Bech32Prefix `json:"high_gas_price"`     
-	LowGasPrice      Bech32Prefix `json:"low_gas_price"`      
-}
-
-type LogoURIs struct {
-	Properties LogoURIsProperties `json:"properties"`
-	Type       string             `json:"type"`      
-}
-
-type LogoURIsProperties struct {
-	PNG PNG `json:"png"`
-	SVG PNG `json:"svg"`
-}
-
-type PNG struct {
-	Format string     `json:"format"`
-	Type   Updatelink `json:"type"`  
-}
-
-type Peer struct {
-	Properties PeerProperties `json:"properties"`
-	Required   []string       `json:"required"`  
-	Type       string         `json:"type"`      
-}
-
-type PeerProperties struct {
-	Address  Bech32Prefix `json:"address"` 
-	ID       Bech32Prefix `json:"id"`      
-	Provider Bech32Prefix `json:"provider"`
-}
-
-type ChainProperties struct {
-	Apis         Apis         `json:"apis"`         
-	Bech32Prefix Bech32Prefix `json:"bech32_prefix"`
-	ChainID      Bech32Prefix `json:"chain_id"`     
-	ChainName    Bech32Prefix `json:"chain_name"`   
-	Codebase     Codebase     `json:"codebase"`     
-	DaemonName   Bech32Prefix `json:"daemon_name"`  
-	Explorers    Explorers    `json:"explorers"`    
-	Fees         Fees         `json:"fees"`         
-	Genesis      Genesis      `json:"genesis"`      
-	KeyAlgos     KeyAlgos     `json:"key_algos"`    
-	NetworkType  NetworkType  `json:"network_type"` 
-	NodeHome     Bech32Prefix `json:"node_home"`    
-	Peers        Peers        `json:"peers"`        
-	PrettyName   Bech32Prefix `json:"pretty_name"`  
-	Slip44       Bech32Prefix `json:"slip44"`       
-	Status       NetworkType  `json:"status"`       
+	Apis         *Apis             `json:"apis,omitempty"`        
+	Bech32Prefix string            `json:"bech32_prefix"`         
+	ChainID      string            `json:"chain_id"`              
+	ChainName    string            `json:"chain_name"`            
+	Codebase     *Codebase         `json:"codebase,omitempty"`    
+	DaemonName   *string           `json:"daemon_name,omitempty"` 
+	Explorers    []ExplorerElement `json:"explorers,omitempty"`   
+	Fees         *Fees             `json:"fees,omitempty"`        
+	Genesis      *Genesis          `json:"genesis,omitempty"`     
+	KeyAlgos     []KeyAlgo         `json:"key_algos,omitempty"`   
+	NetworkType  *NetworkType      `json:"network_type,omitempty"`
+	NodeHome     *string           `json:"node_home,omitempty"`   
+	Peers        *Peers            `json:"peers,omitempty"`       
+	PrettyName   *string           `json:"pretty_name,omitempty"` 
+	Slip44       *float64          `json:"slip44,omitempty"`      
+	Status       *Status           `json:"status,omitempty"`      
 }
 
 type Apis struct {
-	Properties ApisProperties `json:"properties"`
-	Type       string         `json:"type"`      
+	Grpc []GrpcElement `json:"grpc,omitempty"`
+	REST []GrpcElement `json:"rest,omitempty"`
+	RPC  []GrpcElement `json:"rpc,omitempty"` 
 }
 
-type ApisProperties struct {
-	Grpc Explorers `json:"grpc"`
-	REST Explorers `json:"rest"`
-	RPC  Explorers `json:"rpc"` 
-}
-
-type Explorers struct {
-	Items ExplorersItems `json:"items"`
-	Type  string         `json:"type"` 
-}
-
-type ExplorersItems struct {
-	Ref string `json:"$ref"`
+type GrpcElement struct {
+	Address  string  `json:"address"`           
+	Archive  *bool   `json:"archive,omitempty"` 
+	Provider *string `json:"provider,omitempty"`
 }
 
 type Codebase struct {
-	Properties CodebaseProperties `json:"properties"`
-	Required   []string           `json:"required"`  
-	Type       string             `json:"type"`      
-}
-
-type CodebaseProperties struct {
-	Binaries           Binaries           `json:"binaries"`           
-	CompatibleVersions CompatibleVersions `json:"compatible_versions"`
-	GitRepo            PNG                `json:"git_repo"`           
-	RecommendedVersion Bech32Prefix       `json:"recommended_version"`
+	Binaries           *Binaries `json:"binaries,omitempty"` 
+	CompatibleVersions []string  `json:"compatible_versions"`
+	GitRepo            string    `json:"git_repo"`           
+	RecommendedVersion string    `json:"recommended_version"`
 }
 
 type Binaries struct {
-	Properties BinariesProperties `json:"properties"`
-	Type       string             `json:"type"`      
+	LinuxAMD *string `json:"linux/amd,omitempty"`
 }
 
-type BinariesProperties struct {
-	LinuxAMD PNG `json:"linux/amd"`
-}
-
-type CompatibleVersions struct {
-	Items Bech32Prefix `json:"items"`
-	Type  string       `json:"type"` 
+type ExplorerElement struct {
+	AccountPage *string `json:"account_page,omitempty"`
+	Kind        *string `json:"kind,omitempty"`        
+	TxPage      *string `json:"tx_page,omitempty"`     
+	URL         *string `json:"url,omitempty"`         
 }
 
 type Fees struct {
-	Properties FeesProperties `json:"properties"`
-	Type       string         `json:"type"`      
+	FeeTokens []FeeTokenElement `json:"fee_tokens,omitempty"`
 }
 
-type FeesProperties struct {
-	FeeTokens Explorers `json:"fee_tokens"`
+type FeeTokenElement struct {
+	AverageGasPrice  *float64 `json:"average_gas_price,omitempty"`  
+	Denom            string   `json:"denom"`                        
+	FixedMinGasPrice *float64 `json:"fixed_min_gas_price,omitempty"`
+	HighGasPrice     *float64 `json:"high_gas_price,omitempty"`     
+	LowGasPrice      *float64 `json:"low_gas_price,omitempty"`      
 }
 
 type Genesis struct {
-	Properties GenesisProperties `json:"properties"`
-	Type       string            `json:"type"`      
-}
-
-type GenesisProperties struct {
-	GenesisURL Bech32Prefix `json:"genesis_url"`
-}
-
-type KeyAlgos struct {
-	Items KeyAlgosItems `json:"items"`
-	Type  string        `json:"type"` 
-}
-
-type KeyAlgosItems struct {
-	Enum        []string   `json:"enum"`       
-	Type        Updatelink `json:"type"`       
-	UniqueItems bool       `json:"uniqueItems"`
-}
-
-type NetworkType struct {
-	Enum []string `json:"enum"`
+	GenesisURL *string `json:"genesis_url,omitempty"`
 }
 
 type Peers struct {
-	Properties PeersProperties `json:"properties"`
-	Type       string          `json:"type"`      
+	PersistentPeers []PersistentPeerElement `json:"persistent_peers,omitempty"`
+	Seeds           []PersistentPeerElement `json:"seeds,omitempty"`           
 }
 
-type PeersProperties struct {
-	PersistentPeers Explorers `json:"persistent_peers"`
-	Seeds           Explorers `json:"seeds"`           
+type PersistentPeerElement struct {
+	Address  string  `json:"address"`           
+	ID       string  `json:"id"`                
+	Provider *string `json:"provider,omitempty"`
 }
 
-type Updatelink string
+type KeyAlgo string
 const (
-	Number Updatelink = "number"
-	String Updatelink = "string"
+	Ed25519 KeyAlgo = "ed25519"
+	Ethsecp256K1 KeyAlgo = "ethsecp256k1"
+	Secp256K1 KeyAlgo = "secp256k1"
+	Sr25519 KeyAlgo = "sr25519"
+)
+
+type NetworkType string
+const (
+	Mainnet NetworkType = "mainnet"
+	Testnet NetworkType = "testnet"
+)
+
+type Status string
+const (
+	Killed Status = "killed"
+	Live Status = "live"
+	Upcoming Status = "upcoming"
 )

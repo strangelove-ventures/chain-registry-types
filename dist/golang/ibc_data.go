@@ -19,109 +19,39 @@ func (r *IbcData) Marshal() ([]byte, error) {
 }
 
 type IbcData struct {
-	Properties IbcDataProperties `json:"properties"`
-	Required   []string          `json:"required"`  
-	Schema     string            `json:"$schema"`   
-	Type       string            `json:"type"`      
+	Chain1   map[string]interface{} `json:"chain-1"` // Top level IBC data pertaining to the chain. `chain-1` and `chain-2` should be in; alphabetical order.
+	Chain2   map[string]interface{} `json:"chain-2"` // Top level IBC data pertaining to the chain. `chain-1` and `chain-2` should be in; alphabetical order.
+	Channels []Channel              `json:"channels"`
+	Defs     interface{}            `json:"$defs"`   
 }
 
-type IbcDataProperties struct {
-	Chain1   PurpleChain `json:"chain-1"` 
-	Chain2   PurpleChain `json:"chain-2"` 
-	Channels Channels    `json:"channels"`
-	Defs     Defs        `json:"$defs"`   
+type Channel struct {
+	Chain1      map[string]interface{} `json:"chain-1"`              
+	Chain2      map[string]interface{} `json:"chain-2"`              
+	Description *string                `json:"description,omitempty"`// Human readable description of the channel.
+	Ordering    Ordering               `json:"ordering"`             // Determines if packets from a sending module must be 'ordered' or 'unordered'.
+	Tags        *Tags                  `json:"tags,omitempty"`       // Human readable key:value pairs that help describe and distinguish channels.
+	Version     string                 `json:"version"`              // IBC Version
 }
 
-type PurpleChain struct {
-	Description string `json:"description"`
-	Items       Items  `json:"items"`      
-	Type        string `json:"type"`       
-}
-
-type Items struct {
-	Refs string `json:"$refs"`
-}
-
-type Channels struct {
-	Items []Item `json:"items"`
-	Type  string `json:"type"` 
-}
-
-type Item struct {
-	Properties ItemProperties `json:"properties"`
-	Required   []string       `json:"required"`  
-	Type       string         `json:"type"`      
-}
-
-type ItemProperties struct {
-	Chain1      FluffyChain `json:"chain-1"`    
-	Chain2      FluffyChain `json:"chain-2"`    
-	Description ClientID    `json:"description"`
-	Ordering    Ordering    `json:"ordering"`   
-	Tags        Tags        `json:"tags"`       
-	Version     ClientID    `json:"version"`    
-}
-
-type FluffyChain struct {
-	Items Items  `json:"items"`
-	Type  string `json:"type"` 
-}
-
-type ClientID struct {
-	Description string `json:"description"`
-	Type        string `json:"type"`       
-}
-
-type Ordering struct {
-	Description string   `json:"description"`
-	Enum        []string `json:"enum"`       
-}
-
+// Human readable key:value pairs that help describe and distinguish channels.
 type Tags struct {
-	Description string         `json:"description"`
-	Properties  TagsProperties `json:"properties"` 
-	Type        string         `json:"type"`       
+	Dex        *string `json:"dex,omitempty"`       
+	Preferred  *bool   `json:"preferred,omitempty"` 
+	Properties *string `json:"properties,omitempty"`// String that helps describe non-dex use cases ex: interchain accounts(ICA).
+	Status     *Status `json:"status,omitempty"`    
 }
 
-type TagsProperties struct {
-	Dex        ChainName `json:"dex"`       
-	Preferred  ChainName `json:"preferred"` 
-	Properties ClientID  `json:"properties"`
-	Status     Status    `json:"status"`    
-}
+// Determines if packets from a sending module must be 'ordered' or 'unordered'.
+type Ordering string
+const (
+	Ordered Ordering = "ordered"
+	Unordered Ordering = "unordered"
+)
 
-type ChainName struct {
-	Type string `json:"type"`
-}
-
-type Status struct {
-	Enum []string `json:"enum"`
-}
-
-type Defs struct {
-	ChainInfo   ChainInfo   `json:"chain_info"`  
-	ChannelInfo ChannelInfo `json:"channel_info"`
-}
-
-type ChainInfo struct {
-	Properties ChainInfoProperties `json:"properties"`
-	Required   []string            `json:"required"`  
-	Type       string              `json:"type"`      
-}
-
-type ChainInfoProperties struct {
-	ChainName    ChainName `json:"chain-name"`   
-	ClientID     ClientID  `json:"client-id"`    
-	ConnectionID ClientID  `json:"connection-id"`
-}
-
-type ChannelInfo struct {
-	Properties ChannelInfoProperties `json:"properties"`
-	Required   []string              `json:"required"`  
-	Type       string                `json:"type"`      
-}
-
-type ChannelInfoProperties struct {
-	ChannelID ClientID `json:"channel-id"`
-	PortID    ClientID `json:"port-id"`   
-}
+type Status string
+const (
+	Killed Status = "killed"
+	Live Status = "live"
+	Upcoming Status = "upcoming"
+)

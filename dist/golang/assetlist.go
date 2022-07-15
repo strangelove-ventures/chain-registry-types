@@ -18,132 +18,50 @@ func (r *Assetlist) Marshal() ([]byte, error) {
 	return json.Marshal(r)
 }
 
+// Asset lists are a similar mechanism to allow frontends and other UIs to fetch metadata
+// associated with Cosmos SDK denoms, especially for assets sent over IBC.
 type Assetlist struct {
-	Defs        Defs                `json:"$defs"`      
-	Description string              `json:"description"`
-	ID          string              `json:"$id"`        
-	Properties  AssetlistProperties `json:"properties"` 
-	Required    []string            `json:"required"`   
-	Schema      string              `json:"$schema"`    
-	Title       string              `json:"title"`      
-	Type        string              `json:"type"`       
+	Assets    []AssetElement `json:"assets"`    
+	ChainName string         `json:"chain_name"`
 }
 
-type Defs struct {
-	Asset     Asset     `json:"asset"`     
-	DenomUnit DenomUnit `json:"denom_unit"`
+type AssetElement struct {
+	Address     *string            `json:"address,omitempty"`     // [OPTIONAL] The address of the asset. Only required for type_asset : cw20, snip20
+	Base        string             `json:"base"`                  // The base unit of the asset. Must be in denom_units.
+	CoingeckoID *string            `json:"coingecko_id,omitempty"`// [OPTIONAL] The coingecko id to fetch asset data from coingecko v3 api. See; https://api.coingecko.com/api/v3/coins/list
+	DenomUnits  []DenomUnitElement `json:"denom_units"`           
+	Description *string            `json:"description,omitempty"` // [OPTIONAL] A short description of the asset
+	Display     string             `json:"display"`               // The human friendly unit of the asset. Must be in denom_units.
+	Ibc         *Ibc               `json:"ibc,omitempty"`         // [OPTIONAL] IBC Channel between src and dst between chain
+	LogoURIs    *LogoURIs          `json:"logo_URIs,omitempty"`   
+	Name        string             `json:"name"`                  // The project name of the asset. For example Bitcoin.
+	Symbol      string             `json:"symbol"`                // The symbol of an asset. For example BTC.
+	TypeAsset   *TypeAsset         `json:"type_asset,omitempty"`  // [OPTIONAL] The potential options for type of asset. By default, assumes sdk.coin
 }
 
-type Asset struct {
-	If         If              `json:"if"`        
-	Properties AssetProperties `json:"properties"`
-	Required   []string        `json:"required"`  
-	Then       Then            `json:"then"`      
-	Type       string          `json:"type"`      
+type DenomUnitElement struct {
+	Aliases  []string `json:"aliases,omitempty"`
+	Denom    string   `json:"denom"`            
+	Exponent int64    `json:"exponent"`         
 }
 
-type If struct {
-	Properties IfProperties `json:"properties"`
-	Required   []string     `json:"required"`  
-}
-
-type IfProperties struct {
-	TypeAsset PurpleTypeAsset `json:"type_asset"`
-}
-
-type PurpleTypeAsset struct {
-	Enum []string `json:"enum"`
-}
-
-type AssetProperties struct {
-	Address     Address         `json:"address"`     
-	Base        Address         `json:"base"`        
-	CoingeckoID Address         `json:"coingecko_id"`
-	DenomUnits  Assets          `json:"denom_units"` 
-	Description Address         `json:"description"` 
-	Display     Address         `json:"display"`     
-	Ibc         Ibc             `json:"ibc"`         
-	LogoURIs    LogoURIs        `json:"logo_URIs"`   
-	Name        Address         `json:"name"`        
-	Symbol      Address         `json:"symbol"`      
-	TypeAsset   FluffyTypeAsset `json:"type_asset"`  
-}
-
-type Address struct {
-	Description string `json:"description"`
-	Type        string `json:"type"`       
-}
-
-type Assets struct {
-	Items Items  `json:"items"`
-	Type  string `json:"type"` 
-}
-
-type Items struct {
-	Ref string `json:"$ref"`
-}
-
+// [OPTIONAL] IBC Channel between src and dst between chain
 type Ibc struct {
-	Description string        `json:"description"`
-	Properties  IbcProperties `json:"properties"` 
-	Required    []string      `json:"required"`   
-	Type        string        `json:"type"`       
-}
-
-type IbcProperties struct {
-	DstChannel    ChainName `json:"dst_channel"`   
-	SourceChannel ChainName `json:"source_channel"`
-	SourceDenom   ChainName `json:"source_denom"`  
-}
-
-type ChainName struct {
-	Type string `json:"type"`
+	DstChannel    string `json:"dst_channel"`   
+	SourceChannel string `json:"source_channel"`
+	SourceDenom   string `json:"source_denom"`  
 }
 
 type LogoURIs struct {
-	Properties LogoURIsProperties `json:"properties"`
-	Type       string             `json:"type"`      
+	PNG *string `json:"png,omitempty"`
+	SVG *string `json:"svg,omitempty"`
 }
 
-type LogoURIsProperties struct {
-	PNG PNG `json:"png"`
-	SVG PNG `json:"svg"`
-}
-
-type PNG struct {
-	Format string `json:"format"`
-	Type   string `json:"type"`  
-}
-
-type FluffyTypeAsset struct {
-	Default     string   `json:"default"`    
-	Description string   `json:"description"`
-	Enum        []string `json:"enum"`       
-	Type        string   `json:"type"`       
-}
-
-type Then struct {
-	Required []string `json:"required"`
-}
-
-type DenomUnit struct {
-	Properties DenomUnitProperties `json:"properties"`
-	Required   []string            `json:"required"`  
-	Type       string              `json:"type"`      
-}
-
-type DenomUnitProperties struct {
-	Aliases  Aliases   `json:"aliases"` 
-	Denom    ChainName `json:"denom"`   
-	Exponent ChainName `json:"exponent"`
-}
-
-type Aliases struct {
-	Items ChainName `json:"items"`
-	Type  string    `json:"type"` 
-}
-
-type AssetlistProperties struct {
-	Assets    Assets    `json:"assets"`    
-	ChainName ChainName `json:"chain_name"`
-}
+// [OPTIONAL] The potential options for type of asset. By default, assumes sdk.coin
+type TypeAsset string
+const (
+	Cw20 TypeAsset = "cw20"
+	Erc20 TypeAsset = "erc20"
+	SDKCoin TypeAsset = "sdk.coin"
+	Snip20 TypeAsset = "snip20"
+)

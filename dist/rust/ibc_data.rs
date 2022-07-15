@@ -12,213 +12,87 @@
 // }
 
 extern crate serde_derive;
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize)]
 pub struct IbcData {
-    #[serde(rename = "type")]
-    ibc_data_type: String,
-
-    #[serde(rename = "properties")]
-    properties: IbcDataProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
-    #[serde(rename = "$schema")]
-    schema: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct IbcDataProperties {
+    /// Top level IBC data pertaining to the chain. `chain-1` and `chain-2` should be in
+    /// alphabetical order.
     #[serde(rename = "chain-1")]
-    chain_1: PurpleChain,
+    chain_1: HashMap<String, Option<serde_json::Value>>,
 
+    /// Top level IBC data pertaining to the chain. `chain-1` and `chain-2` should be in
+    /// alphabetical order.
     #[serde(rename = "chain-2")]
-    chain_2: PurpleChain,
+    chain_2: HashMap<String, Option<serde_json::Value>>,
 
     #[serde(rename = "channels")]
-    channels: Channels,
+    channels: Vec<Channel>,
 
     #[serde(rename = "$defs")]
-    defs: Defs,
+    defs: Option<serde_json::Value>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct PurpleChain {
-    #[serde(rename = "type")]
-    chain_type: String,
-
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "items")]
-    items: Items,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Items {
-    #[serde(rename = "$refs")]
-    refs: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Channels {
-    #[serde(rename = "type")]
-    channels_type: String,
-
-    #[serde(rename = "items")]
-    items: Vec<Item>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Item {
-    #[serde(rename = "type")]
-    item_type: String,
-
-    #[serde(rename = "properties")]
-    properties: ItemProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ItemProperties {
+pub struct Channel {
     #[serde(rename = "chain-1")]
-    chain_1: FluffyChain,
+    chain_1: HashMap<String, Option<serde_json::Value>>,
 
     #[serde(rename = "chain-2")]
-    chain_2: FluffyChain,
+    chain_2: HashMap<String, Option<serde_json::Value>>,
 
+    /// Human readable description of the channel.
     #[serde(rename = "description")]
-    description: ClientId,
+    description: Option<String>,
 
+    /// Determines if packets from a sending module must be 'ordered' or 'unordered'.
     #[serde(rename = "ordering")]
     ordering: Ordering,
 
+    /// Human readable key:value pairs that help describe and distinguish channels.
     #[serde(rename = "tags")]
-    tags: Tags,
+    tags: Option<Tags>,
 
+    /// IBC Version
     #[serde(rename = "version")]
-    version: ClientId,
+    version: String,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct FluffyChain {
-    #[serde(rename = "type")]
-    chain_type: String,
-
-    #[serde(rename = "items")]
-    items: Items,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ClientId {
-    #[serde(rename = "type")]
-    client_id_type: String,
-
-    #[serde(rename = "description")]
-    description: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Ordering {
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "enum")]
-    ordering_enum: Vec<String>,
-}
-
+/// Human readable key:value pairs that help describe and distinguish channels.
 #[derive(Serialize, Deserialize)]
 pub struct Tags {
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "properties")]
-    properties: TagsProperties,
-
-    #[serde(rename = "type")]
-    tags_type: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct TagsProperties {
     #[serde(rename = "dex")]
-    dex: ChainName,
+    dex: Option<String>,
 
     #[serde(rename = "preferred")]
-    preferred: ChainName,
+    preferred: Option<bool>,
 
+    /// String that helps describe non-dex use cases ex: interchain accounts(ICA).
     #[serde(rename = "properties")]
-    properties: ClientId,
+    properties: Option<String>,
 
     #[serde(rename = "status")]
-    status: Status,
+    status: Option<Status>,
+}
+
+/// Determines if packets from a sending module must be 'ordered' or 'unordered'.
+#[derive(Serialize, Deserialize)]
+pub enum Ordering {
+    #[serde(rename = "ordered")]
+    Ordered,
+
+    #[serde(rename = "unordered")]
+    Unordered,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct ChainName {
-    #[serde(rename = "type")]
-    chain_name_type: String,
-}
+pub enum Status {
+    #[serde(rename = "killed")]
+    Killed,
 
-#[derive(Serialize, Deserialize)]
-pub struct Status {
-    #[serde(rename = "enum")]
-    status_enum: Vec<String>,
-}
+    #[serde(rename = "live")]
+    Live,
 
-#[derive(Serialize, Deserialize)]
-pub struct Defs {
-    #[serde(rename = "chain_info")]
-    chain_info: ChainInfo,
-
-    #[serde(rename = "channel_info")]
-    channel_info: ChannelInfo,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ChainInfo {
-    #[serde(rename = "type")]
-    chain_info_type: String,
-
-    #[serde(rename = "properties")]
-    properties: ChainInfoProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ChainInfoProperties {
-    #[serde(rename = "chain-name")]
-    chain_name: ChainName,
-
-    #[serde(rename = "client-id")]
-    client_id: ClientId,
-
-    #[serde(rename = "connection-id")]
-    connection_id: ClientId,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ChannelInfo {
-    #[serde(rename = "type")]
-    channel_info_type: String,
-
-    #[serde(rename = "properties")]
-    properties: ChannelInfoProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ChannelInfoProperties {
-    #[serde(rename = "channel-id")]
-    channel_id: ClientId,
-
-    #[serde(rename = "port-id")]
-    port_id: ClientId,
+    #[serde(rename = "upcoming")]
+    Upcoming,
 }

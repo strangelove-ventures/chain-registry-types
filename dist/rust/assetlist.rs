@@ -13,260 +13,109 @@
 
 extern crate serde_derive;
 
+/// Asset lists are a similar mechanism to allow frontends and other UIs to fetch metadata
+/// associated with Cosmos SDK denoms, especially for assets sent over IBC.
 #[derive(Serialize, Deserialize)]
 pub struct Assetlist {
-    #[serde(rename = "type")]
-    assetlist_type: String,
+    #[serde(rename = "assets")]
+    assets: Vec<AssetElement>,
 
-    #[serde(rename = "$defs")]
-    defs: Defs,
-
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "$id")]
-    id: String,
-
-    #[serde(rename = "properties")]
-    properties: AssetlistProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
-    #[serde(rename = "$schema")]
-    schema: String,
-
-    #[serde(rename = "title")]
-    title: String,
+    #[serde(rename = "chain_name")]
+    chain_name: String,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Defs {
-    #[serde(rename = "asset")]
-    asset: Asset,
-
-    #[serde(rename = "denom_unit")]
-    denom_unit: DenomUnit,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Asset {
-    #[serde(rename = "if")]
-    asset_if: If,
-
-    #[serde(rename = "type")]
-    asset_type: String,
-
-    #[serde(rename = "properties")]
-    properties: AssetProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
-    #[serde(rename = "then")]
-    then: Then,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct If {
-    #[serde(rename = "properties")]
-    properties: IfProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct IfProperties {
-    #[serde(rename = "type_asset")]
-    type_asset: PurpleTypeAsset,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct PurpleTypeAsset {
-    #[serde(rename = "enum")]
-    type_asset_enum: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct AssetProperties {
+pub struct AssetElement {
+    /// [OPTIONAL] The address of the asset. Only required for type_asset : cw20, snip20
     #[serde(rename = "address")]
-    address: Address,
+    address: Option<String>,
 
+    /// The base unit of the asset. Must be in denom_units.
     #[serde(rename = "base")]
-    base: Address,
+    base: String,
 
+    /// [OPTIONAL] The coingecko id to fetch asset data from coingecko v3 api. See
+    /// https://api.coingecko.com/api/v3/coins/list
     #[serde(rename = "coingecko_id")]
-    coingecko_id: Address,
+    coingecko_id: Option<String>,
 
     #[serde(rename = "denom_units")]
-    denom_units: Assets,
+    denom_units: Vec<DenomUnitElement>,
 
+    /// [OPTIONAL] A short description of the asset
     #[serde(rename = "description")]
-    description: Address,
+    description: Option<String>,
 
+    /// The human friendly unit of the asset. Must be in denom_units.
     #[serde(rename = "display")]
-    display: Address,
+    display: String,
 
+    /// [OPTIONAL] IBC Channel between src and dst between chain
     #[serde(rename = "ibc")]
-    ibc: Ibc,
+    ibc: Option<Ibc>,
 
     #[serde(rename = "logo_URIs")]
-    logo_ur_is: LogoUrIs,
+    logo_ur_is: Option<LogoUrIs>,
 
+    /// The project name of the asset. For example Bitcoin.
     #[serde(rename = "name")]
-    name: Address,
+    name: String,
 
+    /// The symbol of an asset. For example BTC.
     #[serde(rename = "symbol")]
-    symbol: Address,
+    symbol: String,
 
+    /// [OPTIONAL] The potential options for type of asset. By default, assumes sdk.coin
     #[serde(rename = "type_asset")]
-    type_asset: FluffyTypeAsset,
+    type_asset: Option<TypeAsset>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Address {
-    #[serde(rename = "type")]
-    address_type: String,
+pub struct DenomUnitElement {
+    #[serde(rename = "aliases")]
+    aliases: Option<Vec<String>>,
 
-    #[serde(rename = "description")]
-    description: String,
+    #[serde(rename = "denom")]
+    denom: String,
+
+    #[serde(rename = "exponent")]
+    exponent: i64,
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct Assets {
-    #[serde(rename = "type")]
-    assets_type: String,
-
-    #[serde(rename = "items")]
-    items: Items,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Items {
-    #[serde(rename = "$ref")]
-    items_ref: String,
-}
-
+/// [OPTIONAL] IBC Channel between src and dst between chain
 #[derive(Serialize, Deserialize)]
 pub struct Ibc {
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "type")]
-    ibc_type: String,
-
-    #[serde(rename = "properties")]
-    properties: IbcProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct IbcProperties {
     #[serde(rename = "dst_channel")]
-    dst_channel: ChainName,
+    dst_channel: String,
 
     #[serde(rename = "source_channel")]
-    source_channel: ChainName,
+    source_channel: String,
 
     #[serde(rename = "source_denom")]
-    source_denom: ChainName,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ChainName {
-    #[serde(rename = "type")]
-    chain_name_type: String,
+    source_denom: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct LogoUrIs {
-    #[serde(rename = "type")]
-    logo_ur_is_type: String,
-
-    #[serde(rename = "properties")]
-    properties: LogoUrIsProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct LogoUrIsProperties {
     #[serde(rename = "png")]
-    png: Png,
+    png: Option<String>,
 
     #[serde(rename = "svg")]
-    svg: Png,
+    svg: Option<String>,
 }
 
+/// [OPTIONAL] The potential options for type of asset. By default, assumes sdk.coin
 #[derive(Serialize, Deserialize)]
-pub struct Png {
-    #[serde(rename = "format")]
-    format: String,
+pub enum TypeAsset {
+    #[serde(rename = "cw20")]
+    Cw20,
 
-    #[serde(rename = "type")]
-    png_type: String,
-}
+    #[serde(rename = "erc20")]
+    Erc20,
 
-#[derive(Serialize, Deserialize)]
-pub struct FluffyTypeAsset {
-    #[serde(rename = "description")]
-    description: String,
+    #[serde(rename = "sdk.coin")]
+    SdkCoin,
 
-    #[serde(rename = "default")]
-    type_asset_default: String,
-
-    #[serde(rename = "enum")]
-    type_asset_enum: Vec<String>,
-
-    #[serde(rename = "type")]
-    type_asset_type: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Then {
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct DenomUnit {
-    #[serde(rename = "type")]
-    denom_unit_type: String,
-
-    #[serde(rename = "properties")]
-    properties: DenomUnitProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct DenomUnitProperties {
-    #[serde(rename = "aliases")]
-    aliases: Aliases,
-
-    #[serde(rename = "denom")]
-    denom: ChainName,
-
-    #[serde(rename = "exponent")]
-    exponent: ChainName,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Aliases {
-    #[serde(rename = "type")]
-    aliases_type: String,
-
-    #[serde(rename = "items")]
-    items: ChainName,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct AssetlistProperties {
-    #[serde(rename = "assets")]
-    assets: Assets,
-
-    #[serde(rename = "chain_name")]
-    chain_name: ChainName,
+    #[serde(rename = "snip20")]
+    Snip20,
 }

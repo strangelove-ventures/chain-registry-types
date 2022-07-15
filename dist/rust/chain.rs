@@ -13,416 +13,202 @@
 
 extern crate serde_derive;
 
+/// Cosmos Chain.json is a metadata file that contains information about a cosmos sdk based
+/// chain.
 #[derive(Serialize, Deserialize)]
 pub struct Chain {
-    #[serde(rename = "type")]
-    chain_type: String,
-
-    #[serde(rename = "$defs")]
-    defs: Defs,
-
-    #[serde(rename = "description")]
-    description: String,
-
-    #[serde(rename = "$id")]
-    id: String,
-
-    #[serde(rename = "properties")]
-    properties: ChainProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-
-    #[serde(rename = "$schema")]
-    schema: String,
-
-    #[serde(rename = "title")]
-    title: String,
-
-    #[serde(rename = "updatelink")]
-    updatelink: Updatelink,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Defs {
-    #[serde(rename = "endpoint")]
-    endpoint: Endpoint,
-
-    #[serde(rename = "explorer")]
-    explorer: Explorer,
-
-    #[serde(rename = "fee_token")]
-    fee_token: FeeToken,
-
-    #[serde(rename = "logo_URIs")]
-    logo_ur_is: LogoUrIs,
-
-    #[serde(rename = "peer")]
-    peer: Peer,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Endpoint {
-    #[serde(rename = "type")]
-    endpoint_type: String,
-
-    #[serde(rename = "properties")]
-    properties: EndpointProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct EndpointProperties {
-    #[serde(rename = "address")]
-    address: Bech32Prefix,
-
-    #[serde(rename = "archive")]
-    archive: Archive,
-
-    #[serde(rename = "provider")]
-    provider: Bech32Prefix,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Bech32Prefix {
-    #[serde(rename = "type")]
-    bech32_prefix_type: Updatelink,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Archive {
-    #[serde(rename = "default")]
-    archive_default: bool,
-
-    #[serde(rename = "type")]
-    archive_type: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Explorer {
-    #[serde(rename = "type")]
-    explorer_type: String,
-
-    #[serde(rename = "properties")]
-    properties: ExplorerProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ExplorerProperties {
-    #[serde(rename = "account_page")]
-    account_page: Bech32Prefix,
-
-    #[serde(rename = "kind")]
-    kind: Bech32Prefix,
-
-    #[serde(rename = "tx_page")]
-    tx_page: Bech32Prefix,
-
-    #[serde(rename = "url")]
-    url: Bech32Prefix,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct FeeToken {
-    #[serde(rename = "type")]
-    fee_token_type: String,
-
-    #[serde(rename = "properties")]
-    properties: FeeTokenProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct FeeTokenProperties {
-    #[serde(rename = "average_gas_price")]
-    average_gas_price: Bech32Prefix,
-
-    #[serde(rename = "denom")]
-    denom: Bech32Prefix,
-
-    #[serde(rename = "fixed_min_gas_price")]
-    fixed_min_gas_price: Bech32Prefix,
-
-    #[serde(rename = "high_gas_price")]
-    high_gas_price: Bech32Prefix,
-
-    #[serde(rename = "low_gas_price")]
-    low_gas_price: Bech32Prefix,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct LogoUrIs {
-    #[serde(rename = "type")]
-    logo_ur_is_type: String,
-
-    #[serde(rename = "properties")]
-    properties: LogoUrIsProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct LogoUrIsProperties {
-    #[serde(rename = "png")]
-    png: Png,
-
-    #[serde(rename = "svg")]
-    svg: Png,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Png {
-    #[serde(rename = "format")]
-    format: String,
-
-    #[serde(rename = "type")]
-    png_type: Updatelink,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Peer {
-    #[serde(rename = "type")]
-    peer_type: String,
-
-    #[serde(rename = "properties")]
-    properties: PeerProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct PeerProperties {
-    #[serde(rename = "address")]
-    address: Bech32Prefix,
-
-    #[serde(rename = "id")]
-    id: Bech32Prefix,
-
-    #[serde(rename = "provider")]
-    provider: Bech32Prefix,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ChainProperties {
     #[serde(rename = "apis")]
-    apis: Apis,
+    apis: Option<Apis>,
 
     #[serde(rename = "bech32_prefix")]
-    bech32_prefix: Bech32Prefix,
+    bech32_prefix: String,
 
     #[serde(rename = "chain_id")]
-    chain_id: Bech32Prefix,
+    chain_id: String,
 
     #[serde(rename = "chain_name")]
-    chain_name: Bech32Prefix,
+    chain_name: String,
 
     #[serde(rename = "codebase")]
-    codebase: Codebase,
+    codebase: Option<Codebase>,
 
     #[serde(rename = "daemon_name")]
-    daemon_name: Bech32Prefix,
+    daemon_name: Option<String>,
 
     #[serde(rename = "explorers")]
-    explorers: Explorers,
+    explorers: Option<Vec<ExplorerElement>>,
 
     #[serde(rename = "fees")]
-    fees: Fees,
+    fees: Option<Fees>,
 
     #[serde(rename = "genesis")]
-    genesis: Genesis,
+    genesis: Option<Genesis>,
 
     #[serde(rename = "key_algos")]
-    key_algos: KeyAlgos,
+    key_algos: Option<Vec<KeyAlgo>>,
 
     #[serde(rename = "network_type")]
-    network_type: NetworkType,
+    network_type: Option<NetworkType>,
 
     #[serde(rename = "node_home")]
-    node_home: Bech32Prefix,
+    node_home: Option<String>,
 
     #[serde(rename = "peers")]
-    peers: Peers,
+    peers: Option<Peers>,
 
     #[serde(rename = "pretty_name")]
-    pretty_name: Bech32Prefix,
+    pretty_name: Option<String>,
 
     #[serde(rename = "slip44")]
-    slip44: Bech32Prefix,
+    slip44: Option<f64>,
 
     #[serde(rename = "status")]
-    status: NetworkType,
+    status: Option<Status>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Apis {
-    #[serde(rename = "type")]
-    apis_type: String,
-
-    #[serde(rename = "properties")]
-    properties: ApisProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct ApisProperties {
     #[serde(rename = "grpc")]
-    grpc: Explorers,
+    grpc: Option<Vec<GrpcElement>>,
 
     #[serde(rename = "rest")]
-    rest: Explorers,
+    rest: Option<Vec<GrpcElement>>,
 
     #[serde(rename = "rpc")]
-    rpc: Explorers,
+    rpc: Option<Vec<GrpcElement>>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Explorers {
-    #[serde(rename = "type")]
-    explorers_type: String,
+pub struct GrpcElement {
+    #[serde(rename = "address")]
+    address: String,
 
-    #[serde(rename = "items")]
-    items: ExplorersItems,
-}
+    #[serde(rename = "archive")]
+    archive: Option<bool>,
 
-#[derive(Serialize, Deserialize)]
-pub struct ExplorersItems {
-    #[serde(rename = "$ref")]
-    items_ref: String,
+    #[serde(rename = "provider")]
+    provider: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Codebase {
-    #[serde(rename = "type")]
-    codebase_type: String,
-
-    #[serde(rename = "properties")]
-    properties: CodebaseProperties,
-
-    #[serde(rename = "required")]
-    required: Vec<String>,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct CodebaseProperties {
     #[serde(rename = "binaries")]
-    binaries: Binaries,
+    binaries: Option<Binaries>,
 
     #[serde(rename = "compatible_versions")]
-    compatible_versions: CompatibleVersions,
+    compatible_versions: Vec<String>,
 
     #[serde(rename = "git_repo")]
-    git_repo: Png,
+    git_repo: String,
 
     #[serde(rename = "recommended_version")]
-    recommended_version: Bech32Prefix,
+    recommended_version: String,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Binaries {
-    #[serde(rename = "type")]
-    binaries_type: String,
-
-    #[serde(rename = "properties")]
-    properties: BinariesProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct BinariesProperties {
     #[serde(rename = "linux/amd")]
-    linux_amd: Png,
+    linux_amd: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct CompatibleVersions {
-    #[serde(rename = "type")]
-    compatible_versions_type: String,
+pub struct ExplorerElement {
+    #[serde(rename = "account_page")]
+    account_page: Option<String>,
 
-    #[serde(rename = "items")]
-    items: Bech32Prefix,
+    #[serde(rename = "kind")]
+    kind: Option<String>,
+
+    #[serde(rename = "tx_page")]
+    tx_page: Option<String>,
+
+    #[serde(rename = "url")]
+    url: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Fees {
-    #[serde(rename = "type")]
-    fees_type: String,
-
-    #[serde(rename = "properties")]
-    properties: FeesProperties,
+    #[serde(rename = "fee_tokens")]
+    fee_tokens: Option<Vec<FeeTokenElement>>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct FeesProperties {
-    #[serde(rename = "fee_tokens")]
-    fee_tokens: Explorers,
+pub struct FeeTokenElement {
+    #[serde(rename = "average_gas_price")]
+    average_gas_price: Option<f64>,
+
+    #[serde(rename = "denom")]
+    denom: String,
+
+    #[serde(rename = "fixed_min_gas_price")]
+    fixed_min_gas_price: Option<f64>,
+
+    #[serde(rename = "high_gas_price")]
+    high_gas_price: Option<f64>,
+
+    #[serde(rename = "low_gas_price")]
+    low_gas_price: Option<f64>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Genesis {
-    #[serde(rename = "type")]
-    genesis_type: String,
-
-    #[serde(rename = "properties")]
-    properties: GenesisProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct GenesisProperties {
     #[serde(rename = "genesis_url")]
-    genesis_url: Bech32Prefix,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct KeyAlgos {
-    #[serde(rename = "items")]
-    items: KeyAlgosItems,
-
-    #[serde(rename = "type")]
-    key_algos_type: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct KeyAlgosItems {
-    #[serde(rename = "enum")]
-    items_enum: Vec<String>,
-
-    #[serde(rename = "type")]
-    items_type: Updatelink,
-
-    #[serde(rename = "uniqueItems")]
-    unique_items: bool,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct NetworkType {
-    #[serde(rename = "enum")]
-    network_type_enum: Vec<String>,
+    genesis_url: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct Peers {
-    #[serde(rename = "type")]
-    peers_type: String,
-
-    #[serde(rename = "properties")]
-    properties: PeersProperties,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct PeersProperties {
     #[serde(rename = "persistent_peers")]
-    persistent_peers: Explorers,
+    persistent_peers: Option<Vec<PersistentPeerElement>>,
 
     #[serde(rename = "seeds")]
-    seeds: Explorers,
+    seeds: Option<Vec<PersistentPeerElement>>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub enum Updatelink {
-    #[serde(rename = "number")]
-    Number,
+pub struct PersistentPeerElement {
+    #[serde(rename = "address")]
+    address: String,
 
-    #[serde(rename = "string")]
-    String,
+    #[serde(rename = "id")]
+    id: String,
+
+    #[serde(rename = "provider")]
+    provider: Option<String>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum KeyAlgo {
+    #[serde(rename = "ed25519")]
+    Ed25519,
+
+    #[serde(rename = "ethsecp256k1")]
+    Ethsecp256K1,
+
+    #[serde(rename = "secp256k1")]
+    Secp256K1,
+
+    #[serde(rename = "sr25519")]
+    Sr25519,
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum NetworkType {
+    #[serde(rename = "mainnet")]
+    Mainnet,
+
+    #[serde(rename = "testnet")]
+    Testnet,
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum Status {
+    #[serde(rename = "killed")]
+    Killed,
+
+    #[serde(rename = "live")]
+    Live,
+
+    #[serde(rename = "upcoming")]
+    Upcoming,
 }

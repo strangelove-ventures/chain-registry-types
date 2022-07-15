@@ -6,22 +6,12 @@
 #
 #     result = chain_from_dict(json.loads(json_string))
 
+from typing import Optional, Any, List, TypeVar, Callable, Type, cast
 from enum import Enum
-from typing import Any, List, TypeVar, Type, cast, Callable
 
 
 T = TypeVar("T")
 EnumT = TypeVar("EnumT", bound=Enum)
-
-
-def to_enum(c: Type[EnumT], x: Any) -> EnumT:
-    assert isinstance(x, c)
-    return x.value
-
-
-def from_bool(x: Any) -> bool:
-    assert isinstance(x, bool)
-    return x
 
 
 def from_str(x: Any) -> str:
@@ -29,9 +19,23 @@ def from_str(x: Any) -> str:
     return x
 
 
-def to_class(c: Type[T], x: Any) -> dict:
-    assert isinstance(x, c)
-    return cast(Any, x).to_dict()
+def from_bool(x: Any) -> bool:
+    assert isinstance(x, bool)
+    return x
+
+
+def from_none(x: Any) -> Any:
+    assert x is None
+    return x
+
+
+def from_union(fs, x):
+    for f in fs:
+        try:
+            return f(x)
+        except:
+            pass
+    assert False
 
 
 def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
@@ -39,163 +43,164 @@ def from_list(f: Callable[[Any], T], x: Any) -> List[T]:
     return [f(y) for y in x]
 
 
-class Updatelink(Enum):
-    NUMBER = "number"
-    STRING = "string"
+def to_class(c: Type[T], x: Any) -> dict:
+    assert isinstance(x, c)
+    return cast(Any, x).to_dict()
 
 
-class Bech32Prefix:
-    type: Updatelink
-
-    def __init__(self, type: Updatelink) -> None:
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Bech32Prefix':
-        assert isinstance(obj, dict)
-        type = Updatelink(obj.get("type"))
-        return Bech32Prefix(type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["type"] = to_enum(Updatelink, self.type)
-        return result
+def from_float(x: Any) -> float:
+    assert isinstance(x, (float, int)) and not isinstance(x, bool)
+    return float(x)
 
 
-class Archive:
-    default: bool
-    type: str
-
-    def __init__(self, default: bool, type: str) -> None:
-        self.default = default
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Archive':
-        assert isinstance(obj, dict)
-        default = from_bool(obj.get("default"))
-        type = from_str(obj.get("type"))
-        return Archive(default, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["default"] = from_bool(self.default)
-        result["type"] = from_str(self.type)
-        return result
+def to_float(x: Any) -> float:
+    assert isinstance(x, float)
+    return x
 
 
-class EndpointProperties:
-    address: Bech32Prefix
-    archive: Archive
-    provider: Bech32Prefix
+def to_enum(c: Type[EnumT], x: Any) -> EnumT:
+    assert isinstance(x, c)
+    return x.value
 
-    def __init__(self, address: Bech32Prefix, archive: Archive, provider: Bech32Prefix) -> None:
+
+class GrpcElement:
+    address: str
+    archive: Optional[bool]
+    provider: Optional[str]
+
+    def __init__(self, address: str, archive: Optional[bool], provider: Optional[str]) -> None:
         self.address = address
         self.archive = archive
         self.provider = provider
 
     @staticmethod
-    def from_dict(obj: Any) -> 'EndpointProperties':
+    def from_dict(obj: Any) -> 'GrpcElement':
         assert isinstance(obj, dict)
-        address = Bech32Prefix.from_dict(obj.get("address"))
-        archive = Archive.from_dict(obj.get("archive"))
-        provider = Bech32Prefix.from_dict(obj.get("provider"))
-        return EndpointProperties(address, archive, provider)
+        address = from_str(obj.get("address"))
+        archive = from_union([from_bool, from_none], obj.get("archive"))
+        provider = from_union([from_none, from_str], obj.get("provider"))
+        return GrpcElement(address, archive, provider)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["address"] = to_class(Bech32Prefix, self.address)
-        result["archive"] = to_class(Archive, self.archive)
-        result["provider"] = to_class(Bech32Prefix, self.provider)
+        result["address"] = from_str(self.address)
+        result["archive"] = from_union([from_bool, from_none], self.archive)
+        result["provider"] = from_union([from_none, from_str], self.provider)
         return result
 
 
-class Endpoint:
-    properties: EndpointProperties
-    required: List[str]
-    type: str
+class Apis:
+    grpc: Optional[List[GrpcElement]]
+    rest: Optional[List[GrpcElement]]
+    rpc: Optional[List[GrpcElement]]
 
-    def __init__(self, properties: EndpointProperties, required: List[str], type: str) -> None:
-        self.properties = properties
-        self.required = required
-        self.type = type
+    def __init__(self, grpc: Optional[List[GrpcElement]], rest: Optional[List[GrpcElement]], rpc: Optional[List[GrpcElement]]) -> None:
+        self.grpc = grpc
+        self.rest = rest
+        self.rpc = rpc
 
     @staticmethod
-    def from_dict(obj: Any) -> 'Endpoint':
+    def from_dict(obj: Any) -> 'Apis':
         assert isinstance(obj, dict)
-        properties = EndpointProperties.from_dict(obj.get("properties"))
-        required = from_list(from_str, obj.get("required"))
-        type = from_str(obj.get("type"))
-        return Endpoint(properties, required, type)
+        grpc = from_union([lambda x: from_list(GrpcElement.from_dict, x), from_none], obj.get("grpc"))
+        rest = from_union([lambda x: from_list(GrpcElement.from_dict, x), from_none], obj.get("rest"))
+        rpc = from_union([lambda x: from_list(GrpcElement.from_dict, x), from_none], obj.get("rpc"))
+        return Apis(grpc, rest, rpc)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["properties"] = to_class(EndpointProperties, self.properties)
-        result["required"] = from_list(from_str, self.required)
-        result["type"] = from_str(self.type)
+        result["grpc"] = from_union([lambda x: from_list(lambda x: to_class(GrpcElement, x), x), from_none], self.grpc)
+        result["rest"] = from_union([lambda x: from_list(lambda x: to_class(GrpcElement, x), x), from_none], self.rest)
+        result["rpc"] = from_union([lambda x: from_list(lambda x: to_class(GrpcElement, x), x), from_none], self.rpc)
         return result
 
 
-class ExplorerProperties:
-    account_page: Bech32Prefix
-    kind: Bech32Prefix
-    tx_page: Bech32Prefix
-    url: Bech32Prefix
+class Binaries:
+    linux_amd: Optional[str]
 
-    def __init__(self, account_page: Bech32Prefix, kind: Bech32Prefix, tx_page: Bech32Prefix, url: Bech32Prefix) -> None:
+    def __init__(self, linux_amd: Optional[str]) -> None:
+        self.linux_amd = linux_amd
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Binaries':
+        assert isinstance(obj, dict)
+        linux_amd = from_union([from_none, from_str], obj.get("linux/amd"))
+        return Binaries(linux_amd)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["linux/amd"] = from_union([from_none, from_str], self.linux_amd)
+        return result
+
+
+class Codebase:
+    binaries: Optional[Binaries]
+    compatible_versions: List[str]
+    git_repo: str
+    recommended_version: str
+
+    def __init__(self, binaries: Optional[Binaries], compatible_versions: List[str], git_repo: str, recommended_version: str) -> None:
+        self.binaries = binaries
+        self.compatible_versions = compatible_versions
+        self.git_repo = git_repo
+        self.recommended_version = recommended_version
+
+    @staticmethod
+    def from_dict(obj: Any) -> 'Codebase':
+        assert isinstance(obj, dict)
+        binaries = from_union([Binaries.from_dict, from_none], obj.get("binaries"))
+        compatible_versions = from_list(from_str, obj.get("compatible_versions"))
+        git_repo = from_str(obj.get("git_repo"))
+        recommended_version = from_str(obj.get("recommended_version"))
+        return Codebase(binaries, compatible_versions, git_repo, recommended_version)
+
+    def to_dict(self) -> dict:
+        result: dict = {}
+        result["binaries"] = from_union([lambda x: to_class(Binaries, x), from_none], self.binaries)
+        result["compatible_versions"] = from_list(from_str, self.compatible_versions)
+        result["git_repo"] = from_str(self.git_repo)
+        result["recommended_version"] = from_str(self.recommended_version)
+        return result
+
+
+class ExplorerElement:
+    account_page: Optional[str]
+    kind: Optional[str]
+    tx_page: Optional[str]
+    url: Optional[str]
+
+    def __init__(self, account_page: Optional[str], kind: Optional[str], tx_page: Optional[str], url: Optional[str]) -> None:
         self.account_page = account_page
         self.kind = kind
         self.tx_page = tx_page
         self.url = url
 
     @staticmethod
-    def from_dict(obj: Any) -> 'ExplorerProperties':
+    def from_dict(obj: Any) -> 'ExplorerElement':
         assert isinstance(obj, dict)
-        account_page = Bech32Prefix.from_dict(obj.get("account_page"))
-        kind = Bech32Prefix.from_dict(obj.get("kind"))
-        tx_page = Bech32Prefix.from_dict(obj.get("tx_page"))
-        url = Bech32Prefix.from_dict(obj.get("url"))
-        return ExplorerProperties(account_page, kind, tx_page, url)
+        account_page = from_union([from_none, from_str], obj.get("account_page"))
+        kind = from_union([from_none, from_str], obj.get("kind"))
+        tx_page = from_union([from_none, from_str], obj.get("tx_page"))
+        url = from_union([from_none, from_str], obj.get("url"))
+        return ExplorerElement(account_page, kind, tx_page, url)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["account_page"] = to_class(Bech32Prefix, self.account_page)
-        result["kind"] = to_class(Bech32Prefix, self.kind)
-        result["tx_page"] = to_class(Bech32Prefix, self.tx_page)
-        result["url"] = to_class(Bech32Prefix, self.url)
+        result["account_page"] = from_union([from_none, from_str], self.account_page)
+        result["kind"] = from_union([from_none, from_str], self.kind)
+        result["tx_page"] = from_union([from_none, from_str], self.tx_page)
+        result["url"] = from_union([from_none, from_str], self.url)
         return result
 
 
-class Explorer:
-    properties: ExplorerProperties
-    type: str
+class FeeTokenElement:
+    average_gas_price: Optional[float]
+    denom: str
+    fixed_min_gas_price: Optional[float]
+    high_gas_price: Optional[float]
+    low_gas_price: Optional[float]
 
-    def __init__(self, properties: ExplorerProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Explorer':
-        assert isinstance(obj, dict)
-        properties = ExplorerProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return Explorer(properties, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(ExplorerProperties, self.properties)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class FeeTokenProperties:
-    average_gas_price: Bech32Prefix
-    denom: Bech32Prefix
-    fixed_min_gas_price: Bech32Prefix
-    high_gas_price: Bech32Prefix
-    low_gas_price: Bech32Prefix
-
-    def __init__(self, average_gas_price: Bech32Prefix, denom: Bech32Prefix, fixed_min_gas_price: Bech32Prefix, high_gas_price: Bech32Prefix, low_gas_price: Bech32Prefix) -> None:
+    def __init__(self, average_gas_price: Optional[float], denom: str, fixed_min_gas_price: Optional[float], high_gas_price: Optional[float], low_gas_price: Optional[float]) -> None:
         self.average_gas_price = average_gas_price
         self.denom = denom
         self.fixed_min_gas_price = fixed_min_gas_price
@@ -203,618 +208,149 @@ class FeeTokenProperties:
         self.low_gas_price = low_gas_price
 
     @staticmethod
-    def from_dict(obj: Any) -> 'FeeTokenProperties':
+    def from_dict(obj: Any) -> 'FeeTokenElement':
         assert isinstance(obj, dict)
-        average_gas_price = Bech32Prefix.from_dict(obj.get("average_gas_price"))
-        denom = Bech32Prefix.from_dict(obj.get("denom"))
-        fixed_min_gas_price = Bech32Prefix.from_dict(obj.get("fixed_min_gas_price"))
-        high_gas_price = Bech32Prefix.from_dict(obj.get("high_gas_price"))
-        low_gas_price = Bech32Prefix.from_dict(obj.get("low_gas_price"))
-        return FeeTokenProperties(average_gas_price, denom, fixed_min_gas_price, high_gas_price, low_gas_price)
+        average_gas_price = from_union([from_float, from_none], obj.get("average_gas_price"))
+        denom = from_str(obj.get("denom"))
+        fixed_min_gas_price = from_union([from_float, from_none], obj.get("fixed_min_gas_price"))
+        high_gas_price = from_union([from_float, from_none], obj.get("high_gas_price"))
+        low_gas_price = from_union([from_float, from_none], obj.get("low_gas_price"))
+        return FeeTokenElement(average_gas_price, denom, fixed_min_gas_price, high_gas_price, low_gas_price)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["average_gas_price"] = to_class(Bech32Prefix, self.average_gas_price)
-        result["denom"] = to_class(Bech32Prefix, self.denom)
-        result["fixed_min_gas_price"] = to_class(Bech32Prefix, self.fixed_min_gas_price)
-        result["high_gas_price"] = to_class(Bech32Prefix, self.high_gas_price)
-        result["low_gas_price"] = to_class(Bech32Prefix, self.low_gas_price)
+        result["average_gas_price"] = from_union([to_float, from_none], self.average_gas_price)
+        result["denom"] = from_str(self.denom)
+        result["fixed_min_gas_price"] = from_union([to_float, from_none], self.fixed_min_gas_price)
+        result["high_gas_price"] = from_union([to_float, from_none], self.high_gas_price)
+        result["low_gas_price"] = from_union([to_float, from_none], self.low_gas_price)
         return result
 
 
-class FeeToken:
-    properties: FeeTokenProperties
-    required: List[str]
-    type: str
+class Fees:
+    fee_tokens: Optional[List[FeeTokenElement]]
 
-    def __init__(self, properties: FeeTokenProperties, required: List[str], type: str) -> None:
-        self.properties = properties
-        self.required = required
-        self.type = type
+    def __init__(self, fee_tokens: Optional[List[FeeTokenElement]]) -> None:
+        self.fee_tokens = fee_tokens
 
     @staticmethod
-    def from_dict(obj: Any) -> 'FeeToken':
+    def from_dict(obj: Any) -> 'Fees':
         assert isinstance(obj, dict)
-        properties = FeeTokenProperties.from_dict(obj.get("properties"))
-        required = from_list(from_str, obj.get("required"))
-        type = from_str(obj.get("type"))
-        return FeeToken(properties, required, type)
+        fee_tokens = from_union([lambda x: from_list(FeeTokenElement.from_dict, x), from_none], obj.get("fee_tokens"))
+        return Fees(fee_tokens)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["properties"] = to_class(FeeTokenProperties, self.properties)
-        result["required"] = from_list(from_str, self.required)
-        result["type"] = from_str(self.type)
+        result["fee_tokens"] = from_union([lambda x: from_list(lambda x: to_class(FeeTokenElement, x), x), from_none], self.fee_tokens)
         return result
 
 
-class PNG:
-    format: str
-    type: Updatelink
+class Genesis:
+    genesis_url: Optional[str]
 
-    def __init__(self, format: str, type: Updatelink) -> None:
-        self.format = format
-        self.type = type
+    def __init__(self, genesis_url: Optional[str]) -> None:
+        self.genesis_url = genesis_url
 
     @staticmethod
-    def from_dict(obj: Any) -> 'PNG':
+    def from_dict(obj: Any) -> 'Genesis':
         assert isinstance(obj, dict)
-        format = from_str(obj.get("format"))
-        type = Updatelink(obj.get("type"))
-        return PNG(format, type)
+        genesis_url = from_union([from_none, from_str], obj.get("genesis_url"))
+        return Genesis(genesis_url)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["format"] = from_str(self.format)
-        result["type"] = to_enum(Updatelink, self.type)
+        result["genesis_url"] = from_union([from_none, from_str], self.genesis_url)
         return result
 
 
-class LogoURIsProperties:
-    png: PNG
-    svg: PNG
-
-    def __init__(self, png: PNG, svg: PNG) -> None:
-        self.png = png
-        self.svg = svg
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'LogoURIsProperties':
-        assert isinstance(obj, dict)
-        png = PNG.from_dict(obj.get("png"))
-        svg = PNG.from_dict(obj.get("svg"))
-        return LogoURIsProperties(png, svg)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["png"] = to_class(PNG, self.png)
-        result["svg"] = to_class(PNG, self.svg)
-        return result
+class KeyAlgo(Enum):
+    ED25519 = "ed25519"
+    ETHSECP256_K1 = "ethsecp256k1"
+    SECP256_K1 = "secp256k1"
+    SR25519 = "sr25519"
 
 
-class LogoURIs:
-    properties: LogoURIsProperties
-    type: str
-
-    def __init__(self, properties: LogoURIsProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'LogoURIs':
-        assert isinstance(obj, dict)
-        properties = LogoURIsProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return LogoURIs(properties, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(LogoURIsProperties, self.properties)
-        result["type"] = from_str(self.type)
-        return result
+class NetworkType(Enum):
+    MAINNET = "mainnet"
+    TESTNET = "testnet"
 
 
-class PeerProperties:
-    address: Bech32Prefix
-    id: Bech32Prefix
-    provider: Bech32Prefix
+class PersistentPeerElement:
+    address: str
+    id: str
+    provider: Optional[str]
 
-    def __init__(self, address: Bech32Prefix, id: Bech32Prefix, provider: Bech32Prefix) -> None:
+    def __init__(self, address: str, id: str, provider: Optional[str]) -> None:
         self.address = address
         self.id = id
         self.provider = provider
 
     @staticmethod
-    def from_dict(obj: Any) -> 'PeerProperties':
+    def from_dict(obj: Any) -> 'PersistentPeerElement':
         assert isinstance(obj, dict)
-        address = Bech32Prefix.from_dict(obj.get("address"))
-        id = Bech32Prefix.from_dict(obj.get("id"))
-        provider = Bech32Prefix.from_dict(obj.get("provider"))
-        return PeerProperties(address, id, provider)
+        address = from_str(obj.get("address"))
+        id = from_str(obj.get("id"))
+        provider = from_union([from_none, from_str], obj.get("provider"))
+        return PersistentPeerElement(address, id, provider)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["address"] = to_class(Bech32Prefix, self.address)
-        result["id"] = to_class(Bech32Prefix, self.id)
-        result["provider"] = to_class(Bech32Prefix, self.provider)
-        return result
-
-
-class Peer:
-    properties: PeerProperties
-    required: List[str]
-    type: str
-
-    def __init__(self, properties: PeerProperties, required: List[str], type: str) -> None:
-        self.properties = properties
-        self.required = required
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Peer':
-        assert isinstance(obj, dict)
-        properties = PeerProperties.from_dict(obj.get("properties"))
-        required = from_list(from_str, obj.get("required"))
-        type = from_str(obj.get("type"))
-        return Peer(properties, required, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(PeerProperties, self.properties)
-        result["required"] = from_list(from_str, self.required)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class Defs:
-    endpoint: Endpoint
-    explorer: Explorer
-    fee_token: FeeToken
-    logo_ur_is: LogoURIs
-    peer: Peer
-
-    def __init__(self, endpoint: Endpoint, explorer: Explorer, fee_token: FeeToken, logo_ur_is: LogoURIs, peer: Peer) -> None:
-        self.endpoint = endpoint
-        self.explorer = explorer
-        self.fee_token = fee_token
-        self.logo_ur_is = logo_ur_is
-        self.peer = peer
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Defs':
-        assert isinstance(obj, dict)
-        endpoint = Endpoint.from_dict(obj.get("endpoint"))
-        explorer = Explorer.from_dict(obj.get("explorer"))
-        fee_token = FeeToken.from_dict(obj.get("fee_token"))
-        logo_ur_is = LogoURIs.from_dict(obj.get("logo_URIs"))
-        peer = Peer.from_dict(obj.get("peer"))
-        return Defs(endpoint, explorer, fee_token, logo_ur_is, peer)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["endpoint"] = to_class(Endpoint, self.endpoint)
-        result["explorer"] = to_class(Explorer, self.explorer)
-        result["fee_token"] = to_class(FeeToken, self.fee_token)
-        result["logo_URIs"] = to_class(LogoURIs, self.logo_ur_is)
-        result["peer"] = to_class(Peer, self.peer)
-        return result
-
-
-class ExplorersItems:
-    ref: str
-
-    def __init__(self, ref: str) -> None:
-        self.ref = ref
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'ExplorersItems':
-        assert isinstance(obj, dict)
-        ref = from_str(obj.get("$ref"))
-        return ExplorersItems(ref)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["$ref"] = from_str(self.ref)
-        return result
-
-
-class Explorers:
-    items: ExplorersItems
-    type: str
-
-    def __init__(self, items: ExplorersItems, type: str) -> None:
-        self.items = items
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Explorers':
-        assert isinstance(obj, dict)
-        items = ExplorersItems.from_dict(obj.get("items"))
-        type = from_str(obj.get("type"))
-        return Explorers(items, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["items"] = to_class(ExplorersItems, self.items)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class ApisProperties:
-    grpc: Explorers
-    rest: Explorers
-    rpc: Explorers
-
-    def __init__(self, grpc: Explorers, rest: Explorers, rpc: Explorers) -> None:
-        self.grpc = grpc
-        self.rest = rest
-        self.rpc = rpc
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'ApisProperties':
-        assert isinstance(obj, dict)
-        grpc = Explorers.from_dict(obj.get("grpc"))
-        rest = Explorers.from_dict(obj.get("rest"))
-        rpc = Explorers.from_dict(obj.get("rpc"))
-        return ApisProperties(grpc, rest, rpc)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["grpc"] = to_class(Explorers, self.grpc)
-        result["rest"] = to_class(Explorers, self.rest)
-        result["rpc"] = to_class(Explorers, self.rpc)
-        return result
-
-
-class Apis:
-    properties: ApisProperties
-    type: str
-
-    def __init__(self, properties: ApisProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Apis':
-        assert isinstance(obj, dict)
-        properties = ApisProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return Apis(properties, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(ApisProperties, self.properties)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class BinariesProperties:
-    linux_amd: PNG
-
-    def __init__(self, linux_amd: PNG) -> None:
-        self.linux_amd = linux_amd
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'BinariesProperties':
-        assert isinstance(obj, dict)
-        linux_amd = PNG.from_dict(obj.get("linux/amd"))
-        return BinariesProperties(linux_amd)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["linux/amd"] = to_class(PNG, self.linux_amd)
-        return result
-
-
-class Binaries:
-    properties: BinariesProperties
-    type: str
-
-    def __init__(self, properties: BinariesProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Binaries':
-        assert isinstance(obj, dict)
-        properties = BinariesProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return Binaries(properties, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(BinariesProperties, self.properties)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class CompatibleVersions:
-    items: Bech32Prefix
-    type: str
-
-    def __init__(self, items: Bech32Prefix, type: str) -> None:
-        self.items = items
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'CompatibleVersions':
-        assert isinstance(obj, dict)
-        items = Bech32Prefix.from_dict(obj.get("items"))
-        type = from_str(obj.get("type"))
-        return CompatibleVersions(items, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["items"] = to_class(Bech32Prefix, self.items)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class CodebaseProperties:
-    binaries: Binaries
-    compatible_versions: CompatibleVersions
-    git_repo: PNG
-    recommended_version: Bech32Prefix
-
-    def __init__(self, binaries: Binaries, compatible_versions: CompatibleVersions, git_repo: PNG, recommended_version: Bech32Prefix) -> None:
-        self.binaries = binaries
-        self.compatible_versions = compatible_versions
-        self.git_repo = git_repo
-        self.recommended_version = recommended_version
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'CodebaseProperties':
-        assert isinstance(obj, dict)
-        binaries = Binaries.from_dict(obj.get("binaries"))
-        compatible_versions = CompatibleVersions.from_dict(obj.get("compatible_versions"))
-        git_repo = PNG.from_dict(obj.get("git_repo"))
-        recommended_version = Bech32Prefix.from_dict(obj.get("recommended_version"))
-        return CodebaseProperties(binaries, compatible_versions, git_repo, recommended_version)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["binaries"] = to_class(Binaries, self.binaries)
-        result["compatible_versions"] = to_class(CompatibleVersions, self.compatible_versions)
-        result["git_repo"] = to_class(PNG, self.git_repo)
-        result["recommended_version"] = to_class(Bech32Prefix, self.recommended_version)
-        return result
-
-
-class Codebase:
-    properties: CodebaseProperties
-    required: List[str]
-    type: str
-
-    def __init__(self, properties: CodebaseProperties, required: List[str], type: str) -> None:
-        self.properties = properties
-        self.required = required
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Codebase':
-        assert isinstance(obj, dict)
-        properties = CodebaseProperties.from_dict(obj.get("properties"))
-        required = from_list(from_str, obj.get("required"))
-        type = from_str(obj.get("type"))
-        return Codebase(properties, required, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(CodebaseProperties, self.properties)
-        result["required"] = from_list(from_str, self.required)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class FeesProperties:
-    fee_tokens: Explorers
-
-    def __init__(self, fee_tokens: Explorers) -> None:
-        self.fee_tokens = fee_tokens
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'FeesProperties':
-        assert isinstance(obj, dict)
-        fee_tokens = Explorers.from_dict(obj.get("fee_tokens"))
-        return FeesProperties(fee_tokens)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["fee_tokens"] = to_class(Explorers, self.fee_tokens)
-        return result
-
-
-class Fees:
-    properties: FeesProperties
-    type: str
-
-    def __init__(self, properties: FeesProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Fees':
-        assert isinstance(obj, dict)
-        properties = FeesProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return Fees(properties, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(FeesProperties, self.properties)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class GenesisProperties:
-    genesis_url: Bech32Prefix
-
-    def __init__(self, genesis_url: Bech32Prefix) -> None:
-        self.genesis_url = genesis_url
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'GenesisProperties':
-        assert isinstance(obj, dict)
-        genesis_url = Bech32Prefix.from_dict(obj.get("genesis_url"))
-        return GenesisProperties(genesis_url)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["genesis_url"] = to_class(Bech32Prefix, self.genesis_url)
-        return result
-
-
-class Genesis:
-    properties: GenesisProperties
-    type: str
-
-    def __init__(self, properties: GenesisProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'Genesis':
-        assert isinstance(obj, dict)
-        properties = GenesisProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return Genesis(properties, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["properties"] = to_class(GenesisProperties, self.properties)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class KeyAlgosItems:
-    enum: List[str]
-    type: Updatelink
-    unique_items: bool
-
-    def __init__(self, enum: List[str], type: Updatelink, unique_items: bool) -> None:
-        self.enum = enum
-        self.type = type
-        self.unique_items = unique_items
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'KeyAlgosItems':
-        assert isinstance(obj, dict)
-        enum = from_list(from_str, obj.get("enum"))
-        type = Updatelink(obj.get("type"))
-        unique_items = from_bool(obj.get("uniqueItems"))
-        return KeyAlgosItems(enum, type, unique_items)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["enum"] = from_list(from_str, self.enum)
-        result["type"] = to_enum(Updatelink, self.type)
-        result["uniqueItems"] = from_bool(self.unique_items)
-        return result
-
-
-class KeyAlgos:
-    items: KeyAlgosItems
-    type: str
-
-    def __init__(self, items: KeyAlgosItems, type: str) -> None:
-        self.items = items
-        self.type = type
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'KeyAlgos':
-        assert isinstance(obj, dict)
-        items = KeyAlgosItems.from_dict(obj.get("items"))
-        type = from_str(obj.get("type"))
-        return KeyAlgos(items, type)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["items"] = to_class(KeyAlgosItems, self.items)
-        result["type"] = from_str(self.type)
-        return result
-
-
-class NetworkType:
-    enum: List[str]
-
-    def __init__(self, enum: List[str]) -> None:
-        self.enum = enum
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'NetworkType':
-        assert isinstance(obj, dict)
-        enum = from_list(from_str, obj.get("enum"))
-        return NetworkType(enum)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["enum"] = from_list(from_str, self.enum)
-        return result
-
-
-class PeersProperties:
-    persistent_peers: Explorers
-    seeds: Explorers
-
-    def __init__(self, persistent_peers: Explorers, seeds: Explorers) -> None:
-        self.persistent_peers = persistent_peers
-        self.seeds = seeds
-
-    @staticmethod
-    def from_dict(obj: Any) -> 'PeersProperties':
-        assert isinstance(obj, dict)
-        persistent_peers = Explorers.from_dict(obj.get("persistent_peers"))
-        seeds = Explorers.from_dict(obj.get("seeds"))
-        return PeersProperties(persistent_peers, seeds)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["persistent_peers"] = to_class(Explorers, self.persistent_peers)
-        result["seeds"] = to_class(Explorers, self.seeds)
+        result["address"] = from_str(self.address)
+        result["id"] = from_str(self.id)
+        result["provider"] = from_union([from_none, from_str], self.provider)
         return result
 
 
 class Peers:
-    properties: PeersProperties
-    type: str
+    persistent_peers: Optional[List[PersistentPeerElement]]
+    seeds: Optional[List[PersistentPeerElement]]
 
-    def __init__(self, properties: PeersProperties, type: str) -> None:
-        self.properties = properties
-        self.type = type
+    def __init__(self, persistent_peers: Optional[List[PersistentPeerElement]], seeds: Optional[List[PersistentPeerElement]]) -> None:
+        self.persistent_peers = persistent_peers
+        self.seeds = seeds
 
     @staticmethod
     def from_dict(obj: Any) -> 'Peers':
         assert isinstance(obj, dict)
-        properties = PeersProperties.from_dict(obj.get("properties"))
-        type = from_str(obj.get("type"))
-        return Peers(properties, type)
+        persistent_peers = from_union([lambda x: from_list(PersistentPeerElement.from_dict, x), from_none], obj.get("persistent_peers"))
+        seeds = from_union([lambda x: from_list(PersistentPeerElement.from_dict, x), from_none], obj.get("seeds"))
+        return Peers(persistent_peers, seeds)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["properties"] = to_class(PeersProperties, self.properties)
-        result["type"] = from_str(self.type)
+        result["persistent_peers"] = from_union([lambda x: from_list(lambda x: to_class(PersistentPeerElement, x), x), from_none], self.persistent_peers)
+        result["seeds"] = from_union([lambda x: from_list(lambda x: to_class(PersistentPeerElement, x), x), from_none], self.seeds)
         return result
 
 
-class ChainProperties:
-    apis: Apis
-    bech32_prefix: Bech32Prefix
-    chain_id: Bech32Prefix
-    chain_name: Bech32Prefix
-    codebase: Codebase
-    daemon_name: Bech32Prefix
-    explorers: Explorers
-    fees: Fees
-    genesis: Genesis
-    key_algos: KeyAlgos
-    network_type: NetworkType
-    node_home: Bech32Prefix
-    peers: Peers
-    pretty_name: Bech32Prefix
-    slip44: Bech32Prefix
-    status: NetworkType
+class Status(Enum):
+    KILLED = "killed"
+    LIVE = "live"
+    UPCOMING = "upcoming"
 
-    def __init__(self, apis: Apis, bech32_prefix: Bech32Prefix, chain_id: Bech32Prefix, chain_name: Bech32Prefix, codebase: Codebase, daemon_name: Bech32Prefix, explorers: Explorers, fees: Fees, genesis: Genesis, key_algos: KeyAlgos, network_type: NetworkType, node_home: Bech32Prefix, peers: Peers, pretty_name: Bech32Prefix, slip44: Bech32Prefix, status: NetworkType) -> None:
+
+class Chain:
+    """Cosmos Chain.json is a metadata file that contains information about a cosmos sdk based
+    chain.
+    """
+    apis: Optional[Apis]
+    bech32_prefix: str
+    chain_id: str
+    chain_name: str
+    codebase: Optional[Codebase]
+    daemon_name: Optional[str]
+    explorers: Optional[List[ExplorerElement]]
+    fees: Optional[Fees]
+    genesis: Optional[Genesis]
+    key_algos: Optional[List[KeyAlgo]]
+    network_type: Optional[NetworkType]
+    node_home: Optional[str]
+    peers: Optional[Peers]
+    pretty_name: Optional[str]
+    slip44: Optional[float]
+    status: Optional[Status]
+
+    def __init__(self, apis: Optional[Apis], bech32_prefix: str, chain_id: str, chain_name: str, codebase: Optional[Codebase], daemon_name: Optional[str], explorers: Optional[List[ExplorerElement]], fees: Optional[Fees], genesis: Optional[Genesis], key_algos: Optional[List[KeyAlgo]], network_type: Optional[NetworkType], node_home: Optional[str], peers: Optional[Peers], pretty_name: Optional[str], slip44: Optional[float], status: Optional[Status]) -> None:
         self.apis = apis
         self.bech32_prefix = bech32_prefix
         self.chain_id = chain_id
@@ -833,94 +369,44 @@ class ChainProperties:
         self.status = status
 
     @staticmethod
-    def from_dict(obj: Any) -> 'ChainProperties':
-        assert isinstance(obj, dict)
-        apis = Apis.from_dict(obj.get("apis"))
-        bech32_prefix = Bech32Prefix.from_dict(obj.get("bech32_prefix"))
-        chain_id = Bech32Prefix.from_dict(obj.get("chain_id"))
-        chain_name = Bech32Prefix.from_dict(obj.get("chain_name"))
-        codebase = Codebase.from_dict(obj.get("codebase"))
-        daemon_name = Bech32Prefix.from_dict(obj.get("daemon_name"))
-        explorers = Explorers.from_dict(obj.get("explorers"))
-        fees = Fees.from_dict(obj.get("fees"))
-        genesis = Genesis.from_dict(obj.get("genesis"))
-        key_algos = KeyAlgos.from_dict(obj.get("key_algos"))
-        network_type = NetworkType.from_dict(obj.get("network_type"))
-        node_home = Bech32Prefix.from_dict(obj.get("node_home"))
-        peers = Peers.from_dict(obj.get("peers"))
-        pretty_name = Bech32Prefix.from_dict(obj.get("pretty_name"))
-        slip44 = Bech32Prefix.from_dict(obj.get("slip44"))
-        status = NetworkType.from_dict(obj.get("status"))
-        return ChainProperties(apis, bech32_prefix, chain_id, chain_name, codebase, daemon_name, explorers, fees, genesis, key_algos, network_type, node_home, peers, pretty_name, slip44, status)
-
-    def to_dict(self) -> dict:
-        result: dict = {}
-        result["apis"] = to_class(Apis, self.apis)
-        result["bech32_prefix"] = to_class(Bech32Prefix, self.bech32_prefix)
-        result["chain_id"] = to_class(Bech32Prefix, self.chain_id)
-        result["chain_name"] = to_class(Bech32Prefix, self.chain_name)
-        result["codebase"] = to_class(Codebase, self.codebase)
-        result["daemon_name"] = to_class(Bech32Prefix, self.daemon_name)
-        result["explorers"] = to_class(Explorers, self.explorers)
-        result["fees"] = to_class(Fees, self.fees)
-        result["genesis"] = to_class(Genesis, self.genesis)
-        result["key_algos"] = to_class(KeyAlgos, self.key_algos)
-        result["network_type"] = to_class(NetworkType, self.network_type)
-        result["node_home"] = to_class(Bech32Prefix, self.node_home)
-        result["peers"] = to_class(Peers, self.peers)
-        result["pretty_name"] = to_class(Bech32Prefix, self.pretty_name)
-        result["slip44"] = to_class(Bech32Prefix, self.slip44)
-        result["status"] = to_class(NetworkType, self.status)
-        return result
-
-
-class Chain:
-    defs: Defs
-    description: str
-    id: str
-    properties: ChainProperties
-    required: List[str]
-    schema: str
-    title: str
-    type: str
-    updatelink: Updatelink
-
-    def __init__(self, defs: Defs, description: str, id: str, properties: ChainProperties, required: List[str], schema: str, title: str, type: str, updatelink: Updatelink) -> None:
-        self.defs = defs
-        self.description = description
-        self.id = id
-        self.properties = properties
-        self.required = required
-        self.schema = schema
-        self.title = title
-        self.type = type
-        self.updatelink = updatelink
-
-    @staticmethod
     def from_dict(obj: Any) -> 'Chain':
         assert isinstance(obj, dict)
-        defs = Defs.from_dict(obj.get("$defs"))
-        description = from_str(obj.get("description"))
-        id = from_str(obj.get("$id"))
-        properties = ChainProperties.from_dict(obj.get("properties"))
-        required = from_list(from_str, obj.get("required"))
-        schema = from_str(obj.get("$schema"))
-        title = from_str(obj.get("title"))
-        type = from_str(obj.get("type"))
-        updatelink = Updatelink(obj.get("updatelink"))
-        return Chain(defs, description, id, properties, required, schema, title, type, updatelink)
+        apis = from_union([Apis.from_dict, from_none], obj.get("apis"))
+        bech32_prefix = from_str(obj.get("bech32_prefix"))
+        chain_id = from_str(obj.get("chain_id"))
+        chain_name = from_str(obj.get("chain_name"))
+        codebase = from_union([Codebase.from_dict, from_none], obj.get("codebase"))
+        daemon_name = from_union([from_none, from_str], obj.get("daemon_name"))
+        explorers = from_union([lambda x: from_list(ExplorerElement.from_dict, x), from_none], obj.get("explorers"))
+        fees = from_union([Fees.from_dict, from_none], obj.get("fees"))
+        genesis = from_union([Genesis.from_dict, from_none], obj.get("genesis"))
+        key_algos = from_union([lambda x: from_list(KeyAlgo, x), from_none], obj.get("key_algos"))
+        network_type = from_union([NetworkType, from_none], obj.get("network_type"))
+        node_home = from_union([from_none, from_str], obj.get("node_home"))
+        peers = from_union([Peers.from_dict, from_none], obj.get("peers"))
+        pretty_name = from_union([from_none, from_str], obj.get("pretty_name"))
+        slip44 = from_union([from_float, from_none], obj.get("slip44"))
+        status = from_union([Status, from_none], obj.get("status"))
+        return Chain(apis, bech32_prefix, chain_id, chain_name, codebase, daemon_name, explorers, fees, genesis, key_algos, network_type, node_home, peers, pretty_name, slip44, status)
 
     def to_dict(self) -> dict:
         result: dict = {}
-        result["$defs"] = to_class(Defs, self.defs)
-        result["description"] = from_str(self.description)
-        result["$id"] = from_str(self.id)
-        result["properties"] = to_class(ChainProperties, self.properties)
-        result["required"] = from_list(from_str, self.required)
-        result["$schema"] = from_str(self.schema)
-        result["title"] = from_str(self.title)
-        result["type"] = from_str(self.type)
-        result["updatelink"] = to_enum(Updatelink, self.updatelink)
+        result["apis"] = from_union([lambda x: to_class(Apis, x), from_none], self.apis)
+        result["bech32_prefix"] = from_str(self.bech32_prefix)
+        result["chain_id"] = from_str(self.chain_id)
+        result["chain_name"] = from_str(self.chain_name)
+        result["codebase"] = from_union([lambda x: to_class(Codebase, x), from_none], self.codebase)
+        result["daemon_name"] = from_union([from_none, from_str], self.daemon_name)
+        result["explorers"] = from_union([lambda x: from_list(lambda x: to_class(ExplorerElement, x), x), from_none], self.explorers)
+        result["fees"] = from_union([lambda x: to_class(Fees, x), from_none], self.fees)
+        result["genesis"] = from_union([lambda x: to_class(Genesis, x), from_none], self.genesis)
+        result["key_algos"] = from_union([lambda x: from_list(lambda x: to_enum(KeyAlgo, x), x), from_none], self.key_algos)
+        result["network_type"] = from_union([lambda x: to_enum(NetworkType, x), from_none], self.network_type)
+        result["node_home"] = from_union([from_none, from_str], self.node_home)
+        result["peers"] = from_union([lambda x: to_class(Peers, x), from_none], self.peers)
+        result["pretty_name"] = from_union([from_none, from_str], self.pretty_name)
+        result["slip44"] = from_union([to_float, from_none], self.slip44)
+        result["status"] = from_union([lambda x: to_enum(Status, x), from_none], self.status)
         return result
 
 
