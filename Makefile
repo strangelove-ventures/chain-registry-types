@@ -9,18 +9,18 @@ prepare:
 	mkdir -p $(foreach dirname,$(DIST_DIRNAMES),dist/$(dirname))
 
 build:
-	./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) --alphabetize-properties --out dist/golang/assetlist.go & \
-		./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) --alphabetize-properties --out dist/python/assetlist.py & \
-		./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) --alphabetize-properties --out dist/rust/assetlist.rs & \
-		./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) --alphabetize-properties --out dist/typescript/assetlist.ts & \
-		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) --alphabetize-properties --out dist/golang/chain.go & \
-		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) --alphabetize-properties --out dist/python/chain.py & \
-		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) --alphabetize-properties --out dist/rust/chain.rs & \
-		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) --alphabetize-properties --out dist/typescript/chain.ts & \
-		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) --alphabetize-properties --out dist/golang/ibc_data.go & \
-		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) --alphabetize-properties --out dist/python/ibc_data.py & \
-		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) --alphabetize-properties --out dist/rust/ibc_data.rs & \
-		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) --alphabetize-properties --out dist/typescript/ibc_data.ts & \
+	./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) -s schema --alphabetize-properties --out dist/golang/assetlist.go & \
+		./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) -s schema --alphabetize-properties --out dist/python/assetlist.py & \
+		./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) -s schema --alphabetize-properties --out dist/rust/assetlist.rs & \
+		./node_modules/.bin/quicktype $(ASSETLIST_SCHEMA_URL) -s schema --alphabetize-properties --out dist/typescript/assetlist.ts & \
+		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) -s schema --alphabetize-properties --out dist/golang/chain.go & \
+		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) -s schema --alphabetize-properties --out dist/python/chain.py & \
+		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) -s schema  --alphabetize-properties --out dist/rust/chain.rs & \
+		./node_modules/.bin/quicktype $(CHAIN_SCHEMA_URL) -s schema  --alphabetize-properties --out dist/typescript/chain.ts & \
+		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) -s schema  --alphabetize-properties --out dist/golang/ibc_data.go & \
+		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) -s schema  --alphabetize-properties --out dist/python/ibc_data.py & \
+		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) -s schema  --alphabetize-properties --out dist/rust/ibc_data.rs & \
+		./node_modules/.bin/quicktype $(IBC_DATA_SCHEMA_URL) -s schema  --alphabetize-properties --out dist/typescript/ibc_data.ts & \
 		wait
 
 clean:
