@@ -52,10 +52,12 @@ type GrpcElement struct {
 }
 
 type Codebase struct {
-	Binaries           *Binaries `json:"binaries,omitempty"` 
-	CompatibleVersions []string  `json:"compatible_versions"`
-	GitRepo            string    `json:"git_repo"`           
-	RecommendedVersion string    `json:"recommended_version"`
+	Binaries           *Binaries `json:"binaries,omitempty"`           
+	CompatibleVersions []string  `json:"compatible_versions,omitempty"`
+	CosmosSDKVersion   *string   `json:"cosmos_sdk_version,omitempty"` 
+	GitRepo            *string   `json:"git_repo,omitempty"`           
+	RecommendedVersion *string   `json:"recommended_version,omitempty"`
+	TendermintVersion  *string   `json:"tendermint_version,omitempty"` 
 }
 
 type Binaries struct {

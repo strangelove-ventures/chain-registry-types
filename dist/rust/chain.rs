@@ -96,13 +96,19 @@ pub struct Codebase {
     binaries: Option<Binaries>,
 
     #[serde(rename = "compatible_versions")]
-    compatible_versions: Vec<String>,
+    compatible_versions: Option<Vec<String>>,
+
+    #[serde(rename = "cosmos_sdk_version")]
+    cosmos_sdk_version: Option<String>,
 
     #[serde(rename = "git_repo")]
-    git_repo: String,
+    git_repo: Option<String>,
 
     #[serde(rename = "recommended_version")]
-    recommended_version: String,
+    recommended_version: Option<String>,
+
+    #[serde(rename = "tendermint_version")]
+    tendermint_version: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]

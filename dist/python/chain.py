@@ -135,31 +135,39 @@ class Binaries:
 
 class Codebase:
     binaries: Optional[Binaries]
-    compatible_versions: List[str]
-    git_repo: str
-    recommended_version: str
+    compatible_versions: Optional[List[str]]
+    cosmos_sdk_version: Optional[str]
+    git_repo: Optional[str]
+    recommended_version: Optional[str]
+    tendermint_version: Optional[str]
 
-    def __init__(self, binaries: Optional[Binaries], compatible_versions: List[str], git_repo: str, recommended_version: str) -> None:
+    def __init__(self, binaries: Optional[Binaries], compatible_versions: Optional[List[str]], cosmos_sdk_version: Optional[str], git_repo: Optional[str], recommended_version: Optional[str], tendermint_version: Optional[str]) -> None:
         self.binaries = binaries
         self.compatible_versions = compatible_versions
+        self.cosmos_sdk_version = cosmos_sdk_version
         self.git_repo = git_repo
         self.recommended_version = recommended_version
+        self.tendermint_version = tendermint_version
 
     @staticmethod
     def from_dict(obj: Any) -> 'Codebase':
         assert isinstance(obj, dict)
         binaries = from_union([Binaries.from_dict, from_none], obj.get("binaries"))
-        compatible_versions = from_list(from_str, obj.get("compatible_versions"))
-        git_repo = from_str(obj.get("git_repo"))
-        recommended_version = from_str(obj.get("recommended_version"))
-        return Codebase(binaries, compatible_versions, git_repo, recommended_version)
+        compatible_versions = from_union([lambda x: from_list(from_str, x), from_none], obj.get("compatible_versions"))
+        cosmos_sdk_version = from_union([from_none, from_str], obj.get("cosmos_sdk_version"))
+        git_repo = from_union([from_none, from_str], obj.get("git_repo"))
+        recommended_version = from_union([from_none, from_str], obj.get("recommended_version"))
+        tendermint_version = from_union([from_none, from_str], obj.get("tendermint_version"))
+        return Codebase(binaries, compatible_versions, cosmos_sdk_version, git_repo, recommended_version, tendermint_version)
 
     def to_dict(self) -> dict:
         result: dict = {}
         result["binaries"] = from_union([lambda x: to_class(Binaries, x), from_none], self.binaries)
-        result["compatible_versions"] = from_list(from_str, self.compatible_versions)
-        result["git_repo"] = from_str(self.git_repo)
-        result["recommended_version"] = from_str(self.recommended_version)
+        result["compatible_versions"] = from_union([lambda x: from_list(from_str, x), from_none], self.compatible_versions)
+        result["cosmos_sdk_version"] = from_union([from_none, from_str], self.cosmos_sdk_version)
+        result["git_repo"] = from_union([from_none, from_str], self.git_repo)
+        result["recommended_version"] = from_union([from_none, from_str], self.recommended_version)
+        result["tendermint_version"] = from_union([from_none, from_str], self.tendermint_version)
         return result
 
 
