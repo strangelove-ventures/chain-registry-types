@@ -101,6 +101,12 @@ pub struct Codebase {
     #[serde(rename = "cosmos_sdk_version")]
     cosmos_sdk_version: Option<String>,
 
+    #[serde(rename = "cosmwasm_enabled")]
+    cosmwasm_enabled: Option<bool>,
+
+    #[serde(rename = "cosmwasm_version")]
+    cosmwasm_version: Option<String>,
+
     #[serde(rename = "git_repo")]
     git_repo: Option<String>,
 
